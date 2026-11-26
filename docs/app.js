@@ -67,7 +67,7 @@ function fmtDate(c) { if (!c.date) return t('noDate'); return new Date(c.date + 
 const say = m => { const l = $('#live'); l.textContent = ''; setTimeout(() => l.textContent = m, 30); };
 function cardHTML(c) {
   const overdue = c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
-  return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b>${esc(c.title)}</b><small title="${esc(c.from)}">${esc(c.fromName || c.from)}</small><div><span class="badge">${t(c.priority)}</span>${c.tag ? '<span class="badge tg tg-' + c.tag + '">' + t('tag_' + c.tag) + '</span>' : ''}<span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}${relDay(c) ? ' · ' + relDay(c) : ''}</span>${c.amount ? '<span class="badge">' + esc(c.amount) + '</span>' : ''}${c.location ? '<span class="badge">📍 ' + esc(c.location) + '</span>' : ''}${c.link ? '<span class="badge">🔗</span>' : ''}${c.repeat ? '<span class="badge">↻</span>' : ''}</div><div class="mv"><button class="mvb" data-mv="-1" aria-label="${t('moveBack')}">${lang === 'ar' ? '›' : '‹'}</button><button class="mvb" data-mv="1" aria-label="${t('moveNext')}">${lang === 'ar' ? '‹' : '›'}</button></div></div>`;
+  return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b dir="auto">${esc(c.title)}</b><small title="${esc(c.from)}">${esc(c.fromName || c.from)}</small><div><span class="badge">${t(c.priority)}</span>${c.tag ? '<span class="badge tg tg-' + c.tag + '">' + t('tag_' + c.tag) + '</span>' : ''}<span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}${relDay(c) ? ' · ' + relDay(c) : ''}</span>${c.amount ? '<span class="badge">' + esc(c.amount) + '</span>' : ''}${c.location ? '<span class="badge">📍 ' + esc(c.location) + '</span>' : ''}${c.link ? '<span class="badge">🔗</span>' : ''}${c.repeat ? '<span class="badge">↻</span>' : ''}</div><div class="mv"><button class="mvb" data-mv="-1" aria-label="${t('moveBack')}">${lang === 'ar' ? '›' : '‹'}</button><button class="mvb" data-mv="1" aria-label="${t('moveNext')}">${lang === 'ar' ? '‹' : '›'}</button></div></div>`;
 }
 const isOverdue = c => c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
 const PR = { high: 0, medium: 1, low: 2 };
@@ -137,7 +137,9 @@ function gcal(c) {
   else { const n = new Date(c.date + 'T00:00:00'); n.setDate(n.getDate() + 1); dates = d + '/' + ymd(n).replace(/-/g, ''); }
   return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(c.title) + '&dates=' + dates + '&details=' + encodeURIComponent((c.from ? 'From: ' + c.from + '\n' : '') + (c.notes || '')) + (c.location ? '&location=' + encodeURIComponent(c.location) : '');
 }
+let lastFocus = null;
 function openEdit(id) {
+  lastFocus = document.activeElement;
   const c = cards.find(x => x.id === id); if (!c) return;
   $('#edit').innerHTML = `<label>${t('title')}</label><input id="e1" value="${esc(c.title)}"><label>${t('date')}</label><input id="e2" type="date" value="${c.date || ''}"><label>${t('time')}</label><input id="e3" type="time" value="${c.time || ''}">
   <label>${t('col')}</label><select id="e4">${COLS.map(k => `<option value="${k}" ${k === c.column ? 'selected' : ''}>${t(k)}</option>`).join('')}</select>
@@ -147,7 +149,7 @@ function openEdit(id) {
   if (c.date) { const sn = document.createElement('div'); sn.className = 'row'; sn.innerHTML = `<button type="button" class="ghost" data-sn="1">${t('snooze1')}</button><button type="button" class="ghost" data-sn="7">${t('snooze7')}</button>`; $('#edit').appendChild(sn);
     sn.querySelectorAll('button').forEach(b => b.onclick = () => { const d = new Date(c.date + 'T00:00:00'); d.setDate(d.getDate() + +b.dataset.sn); c.date = ymd(d); save(); render(); $('#dlg').close(); say(c.title + ' ' + c.date); }); }
   if ($('#one')) $('#one').onclick = () => dl('wared-event.ics', 'text/calendar', Wared.toICS([c]));
-  const dlg = $('#dlg'); dlg.showModal();
+  const dlg = $('#dlg'); dlg.showModal(); dlg.onclose = () => { const t0 = document.querySelector('.card[data-id="' + id + '"]'); (t0 || lastFocus || document.body).focus && (t0 || lastFocus || document.body).focus(); };
   $('#edit').onsubmit = e => { const v = e.submitter && e.submitter.value;
     if (v === 'del') { const idx = cards.indexOf(c); cards = cards.filter(x => x.id !== id); toast(t('deleted'), () => { cards.splice(idx, 0, c); save(); render(); }); }
     else if (v === 'ok') Object.assign(c, { title: $('#e1').value, date: $('#e2').value || null, time: $('#e3').value || null, column: $('#e4').value, priority: $('#e5').value, notes: $('#e6').value, endTime: $('#e7').value || null, location: $('#e8').value || null, link: $('#e9').value || null });
