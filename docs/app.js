@@ -1,7 +1,7 @@
 const T = {
- en:{skip:'Skip to content',search:'Search cards',overdue:'overdue',open:'open',undo:'Undo',deleted:'Card deleted',moveBack:'Move to previous column',moveNext:'Move to next column',brand:'Wared',tag:'Important emails, sorted',board:'Board',calendar:'Calendar',paste:'Paste emails',privacy:'Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.',extract:'Extract cards',sample:'Try a sample',clearBoard:'Clear board',foot:'Free and open source (MIT). Data stays in your browser.',exportIcs:'Export .ics',exportJson:'Export JSON',
+ en:{skip:'Skip to content',loc:'Location',link:'Link',addCal:'Add to Google Calendar',dlIcs:'Download .ics',amount:'Amount',end:'Ends',search:'Search cards',overdue:'overdue',open:'open',undo:'Undo',deleted:'Card deleted',moveBack:'Move to previous column',moveNext:'Move to next column',brand:'Wared',tag:'Important emails, sorted',board:'Board',calendar:'Calendar',paste:'Paste emails',privacy:'Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.',extract:'Extract cards',sample:'Try a sample',clearBoard:'Clear board',foot:'Free and open source (MIT). Data stays in your browser.',exportIcs:'Export .ics',exportJson:'Export JSON',
   todo:'To do',scheduled:'Scheduled',waiting:'Waiting',done:'Done',high:'High',medium:'Medium',low:'Low',skipped:'Skipped as noise',add:'Add',noDate:'No date',empty:'Nothing here yet. Paste some emails above.',save:'Save',del:'Delete',title:'Title',date:'Date',time:'Time',col:'Column',notes:'Notes',pri:'Priority',none:'No emails found.',calEmpty:'No dated items yet.',found:'cards found'},
- ar:{skip:'تخطى للمحتوى',search:'ابحث في الكروت',overdue:'متأخر',open:'مفتوح',undo:'تراجع',deleted:'اتحذف الكارت',moveBack:'انقل للعمود السابق',moveNext:'انقل للعمود التالي',brand:'وارد',tag:'الإيميلات المهمة، متنظمة',board:'اللوحة',calendar:'التقويم',paste:'الصق الإيميلات',privacy:'الخصوصية أولاً: النص بيتعالج جوه الصفحة بس. مفيش حاجة بتترفع ولا بنقرا الإيميل بتاعك. افصل بين الإيميلات بسطر ---.',extract:'استخرج الكروت',sample:'جرب مثال',clearBoard:'امسح اللوحة',foot:'مجاني ومفتوح المصدر (MIT). بياناتك بتفضل في متصفحك.',exportIcs:'تصدير .ics',exportJson:'تصدير JSON',
+ ar:{skip:'تخطى للمحتوى',loc:'المكان',link:'الرابط',addCal:'أضف لتقويم جوجل',dlIcs:'نزّل .ics',amount:'المبلغ',end:'ينتهي',search:'ابحث في الكروت',overdue:'متأخر',open:'مفتوح',undo:'تراجع',deleted:'اتحذف الكارت',moveBack:'انقل للعمود السابق',moveNext:'انقل للعمود التالي',brand:'وارد',tag:'الإيميلات المهمة، متنظمة',board:'اللوحة',calendar:'التقويم',paste:'الصق الإيميلات',privacy:'الخصوصية أولاً: النص بيتعالج جوه الصفحة بس. مفيش حاجة بتترفع ولا بنقرا الإيميل بتاعك. افصل بين الإيميلات بسطر ---.',extract:'استخرج الكروت',sample:'جرب مثال',clearBoard:'امسح اللوحة',foot:'مجاني ومفتوح المصدر (MIT). بياناتك بتفضل في متصفحك.',exportIcs:'تصدير .ics',exportJson:'تصدير JSON',
   todo:'المطلوب',scheduled:'مجدول',waiting:'بانتظار',done:'تم',high:'عالية',medium:'متوسطة',low:'منخفضة',skipped:'اتتجاهل (إعلانات)',add:'أضف',noDate:'بدون تاريخ',empty:'مفيش حاجة لسه. الصق إيميلات فوق.',save:'حفظ',del:'حذف',title:'العنوان',date:'التاريخ',time:'الوقت',col:'العمود',notes:'ملاحظات',pri:'الأولوية',none:'مفيش إيميلات.',calEmpty:'مفيش عناصر بتاريخ.',found:'كروت'}
 };
 const COLS = ['todo','scheduled','waiting','done'];
@@ -45,7 +45,7 @@ function fmtDate(c) { if (!c.date) return t('noDate'); return new Date(c.date + 
 const say = m => { const l = $('#live'); l.textContent = ''; setTimeout(() => l.textContent = m, 30); };
 function cardHTML(c) {
   const overdue = c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
-  return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b>${esc(c.title)}</b><small>${esc(c.from)}</small><div><span class="badge">${t(c.priority)}</span><span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}</span></div><div class="mv"><button class="mvb" data-mv="-1" aria-label="${t('moveBack')}">${lang === 'ar' ? '›' : '‹'}</button><button class="mvb" data-mv="1" aria-label="${t('moveNext')}">${lang === 'ar' ? '‹' : '›'}</button></div></div>`;
+  return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b>${esc(c.title)}</b><small>${esc(c.from)}</small><div><span class="badge">${t(c.priority)}</span><span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}</span>${c.amount ? '<span class="badge">' + esc(c.amount) + '</span>' : ''}${c.location ? '<span class="badge">📍 ' + esc(c.location) + '</span>' : ''}${c.link ? '<span class="badge">🔗</span>' : ''}</div><div class="mv"><button class="mvb" data-mv="-1" aria-label="${t('moveBack')}">${lang === 'ar' ? '›' : '‹'}</button><button class="mvb" data-mv="1" aria-label="${t('moveNext')}">${lang === 'ar' ? '‹' : '›'}</button></div></div>`;
 }
 const isOverdue = c => c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
 function visible() {
@@ -96,17 +96,25 @@ function renderCal() {
   $('#nm').onclick = () => { calM = new Date(y, m + 1, 1); renderCal(); };
 }
 function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function gcal(c) {
+  const d = c.date.replace(/-/g, '');
+  let dates;
+  if (c.time) { const s = c.time.replace(':', '') + '00', e = (c.endTime || String((+c.time.slice(0, 2) + 1) % 24).padStart(2, '0') + c.time.slice(3)).replace(':', '') + '00'; dates = d + 'T' + s + '/' + d + 'T' + e; }
+  else { const n = new Date(c.date + 'T00:00:00'); n.setDate(n.getDate() + 1); dates = d + '/' + ymd(n).replace(/-/g, ''); }
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(c.title) + '&dates=' + dates + '&details=' + encodeURIComponent((c.from ? 'From: ' + c.from + '\n' : '') + (c.notes || '')) + (c.location ? '&location=' + encodeURIComponent(c.location) : '');
+}
 function openEdit(id) {
   const c = cards.find(x => x.id === id); if (!c) return;
   $('#edit').innerHTML = `<label>${t('title')}</label><input id="e1" value="${esc(c.title)}"><label>${t('date')}</label><input id="e2" type="date" value="${c.date || ''}"><label>${t('time')}</label><input id="e3" type="time" value="${c.time || ''}">
   <label>${t('col')}</label><select id="e4">${COLS.map(k => `<option value="${k}" ${k === c.column ? 'selected' : ''}>${t(k)}</option>`).join('')}</select>
   <label>${t('pri')}</label><select id="e5">${['high','medium','low'].map(k => `<option value="${k}" ${k === c.priority ? 'selected' : ''}>${t(k)}</option>`).join('')}</select>
-  <label>${t('notes')}</label><textarea id="e6" rows="3">${esc(c.notes)}</textarea>
-  <div class="row"><button class="primary" value="ok">${t('save')}</button><button value="del" class="ghost">${t('del')}</button></div>`;
+  <label>${t('end')}</label><input id="e7" type="time" value="${c.endTime || ''}"><label>${t('loc')}</label><input id="e8" value="${esc(c.location)}"><label>${t('link')}</label><input id="e9" value="${esc(c.link)}" dir="ltr"><label>${t('notes')}</label><textarea id="e6" rows="3">${esc(c.notes)}</textarea>
+  <div class="row"><button class="primary" value="ok">${t('save')}</button><button value="del" class="ghost">${t('del')}</button></div>${c.date ? `<div class="row"><a class="btnl" target="_blank" rel="noopener" href="${gcal(c)}">${t('addCal')}</a><button type="button" id="one" class="ghost">${t('dlIcs')}</button></div>` : ''}${c.link && /^https?:/.test(c.link) ? `<div class="row"><a class="btnl" target="_blank" rel="noopener noreferrer" href="${esc(c.link)}">${t('link')} ↗</a></div>` : ''}`;
+  if ($('#one')) $('#one').onclick = () => dl('wared-event.ics', 'text/calendar', Wared.toICS([c]));
   const dlg = $('#dlg'); dlg.showModal();
   $('#edit').onsubmit = e => { const v = e.submitter && e.submitter.value;
     if (v === 'del') { const idx = cards.indexOf(c); cards = cards.filter(x => x.id !== id); toast(t('deleted'), () => { cards.splice(idx, 0, c); save(); render(); }); }
-    else if (v === 'ok') Object.assign(c, { title: $('#e1').value, date: $('#e2').value || null, time: $('#e3').value || null, column: $('#e4').value, priority: $('#e5').value, notes: $('#e6').value });
+    else if (v === 'ok') Object.assign(c, { title: $('#e1').value, date: $('#e2').value || null, time: $('#e3').value || null, column: $('#e4').value, priority: $('#e5').value, notes: $('#e6').value, endTime: $('#e7').value || null, location: $('#e8').value || null, link: $('#e9').value || null });
     save(); render(); };
 }
 $('#q').oninput = $('#pf').onchange = render;
