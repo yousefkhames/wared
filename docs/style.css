@@ -75,3 +75,7 @@ dialog input,dialog select,dialog textarea{width:100%;padding:8px;border:1px sol
 .clr{padding:0 10px;min-height:0;font-size:12px;margin-inline-start:auto;margin-inline-end:6px}
 .col h3{align-items:center}
 .keys{margin:10px 0 0;color:var(--mut);font-size:13px}
+
+@media print{.top,#inbox,.bar,.how,footer,.mv,.toast,.clr,.keys{display:none!important}body{background:#fff;color:#000}
+ .board{display:block!important}.col{background:none;break-inside:avoid;margin-bottom:12px;border:1px solid #bbb}.card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+ #cal:not([hidden]){display:block}}
