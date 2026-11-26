@@ -42,9 +42,10 @@ function applyLang() {
   render();
 }
 function fmtDate(c) { if (!c.date) return t('noDate'); return new Date(c.date + 'T00:00:00').toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { weekday:'short', day:'numeric', month:'short' }) + (c.time ? ' ' + c.time : ''); }
+const say = m => { const l = $('#live'); l.textContent = ''; setTimeout(() => l.textContent = m, 30); };
 function cardHTML(c) {
   const overdue = c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
-  return `<div class="card ${c.priority}" draggable="true" data-id="${c.id}"><b>${esc(c.title)}</b><small>${esc(c.from)}</small><div><span class="badge">${t(c.priority)}</span><span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}</span></div></div>`;
+  return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b>${esc(c.title)}</b><small>${esc(c.from)}</small><div><span class="badge">${t(c.priority)}</span><span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}</span></div></div>`;
 }
 function render() {
   const b = $('#board');
@@ -53,6 +54,7 @@ function render() {
   b.querySelectorAll('.card').forEach(el => {
     el.addEventListener('dragstart', e => e.dataTransfer.setData('text', el.dataset.id));
     el.addEventListener('click', () => openEdit(el.dataset.id));
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEdit(el.dataset.id); } });
   });
   b.querySelectorAll('.col').forEach(el => {
     el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('over'); });
@@ -81,12 +83,12 @@ $('#go').onclick = () => {
   if (!pending.length) { pv.innerHTML = `<div class="empty">${t('none')}</div>`; return; }
   pv.innerHTML = pending.map((p, i) => `<label class="pv"><input type="checkbox" data-i="${i}" ${p.keep ? 'checked' : ''}><span class="t"><b>${esc(p.title)}</b><small>${esc(p.from)} · ${t(p.priority)} · ${fmtDate(p)}${p.column === 'skip' ? ' · ' + t('skipped') : ''}</small></span></label>`).join('') + `<div class="row"><button class="primary" id="addAll">${t('add')}</button></div>`;
   pv.querySelectorAll('input').forEach(i => i.onchange = () => pending[+i.dataset.i].keep = i.checked);
-  $('#addAll').onclick = () => { pending.filter(p => p.keep).forEach(p => { delete p.keep; delete p.score; delete p.important; if (p.column === 'skip') p.column = 'todo'; cards.push(p); }); save(); pv.hidden = true; $('#src').value = ''; render(); };
+  $('#addAll').onclick = () => { pending.filter(p => p.keep).forEach(p => { delete p.keep; delete p.score; delete p.important; if (p.column === 'skip') p.column = 'todo'; cards.push(p); }); save(); say(pending.filter(p => p.keep !== undefined).length + ' ' + t('found')); pv.hidden = true; $('#src').value = ''; render(); };
 };
 $('#sample').onclick = () => { $('#src').value = SAMPLE; $('#go').click(); };
 $('#clear').onclick = () => { if (confirm(lang === 'ar' ? 'مسح كل الكروت؟' : 'Remove all cards?')) { cards = []; save(); render(); } };
 $('#lang').onclick = () => { lang = lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('wared.lang', lang); applyLang(); };
-function setView(v) { view = v; $('#board').hidden = v !== 'board'; $('#cal').hidden = v !== 'cal'; $('#viewBoard').classList.toggle('on', v === 'board'); $('#viewCal').classList.toggle('on', v === 'cal'); }
+function setView(v) { view = v; $('#viewBoard').setAttribute('aria-pressed', v === 'board'); $('#viewCal').setAttribute('aria-pressed', v === 'cal'); $('#board').hidden = v !== 'board'; $('#cal').hidden = v !== 'cal'; $('#viewBoard').classList.toggle('on', v === 'board'); $('#viewCal').classList.toggle('on', v === 'cal'); }
 $('#viewBoard').onclick = () => setView('board'); $('#viewCal').onclick = () => setView('cal');
 function dl(name, type, data) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name; a.click(); }
 $('#ics').onclick = () => dl('wared.ics', 'text/calendar', Wared.toICS(cards.filter(c => c.column !== 'done')));
