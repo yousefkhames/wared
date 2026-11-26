@@ -1,7 +1,7 @@
 const T = {
- en:{skip:'Skip to content',importJson:'Import JSON',imported:'cards imported',badFile:'Could not read that file',loc:'Location',link:'Link',addCal:'Add to Google Calendar',dlIcs:'Download .ics',amount:'Amount',end:'Ends',search:'Search cards',overdue:'overdue',open:'open',undo:'Undo',deleted:'Card deleted',moveBack:'Move to previous column',moveNext:'Move to next column',brand:'Wared',tag:'Important emails, sorted',board:'Board',calendar:'Calendar',paste:'Paste emails',privacy:'Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.',extract:'Extract cards',sample:'Try a sample',clearBoard:'Clear board',foot:'Free and open source (MIT). Data stays in your browser.',exportIcs:'Export .ics',exportJson:'Export JSON',
+ en:{skip:'Skip to content',s1t:'1. Paste',s1d:'Copy emails from any mail app and paste them here.',s2t:'2. Review',s2d:'Wared picks out deadlines, meetings and requests. You choose what to keep.',s3t:'3. Act',s3d:'Move cards on the board, then export to your calendar.',faq:'Wared never connects to your mailbox and has no server. Your cards are saved only in this browser.',importJson:'Import JSON',imported:'cards imported',badFile:'Could not read that file',loc:'Location',link:'Link',addCal:'Add to Google Calendar',dlIcs:'Download .ics',amount:'Amount',end:'Ends',search:'Search cards',overdue:'overdue',open:'open',undo:'Undo',deleted:'Card deleted',moveBack:'Move to previous column',moveNext:'Move to next column',brand:'Wared',tag:'Important emails, sorted',board:'Board',calendar:'Calendar',paste:'Paste emails',privacy:'Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.',extract:'Extract cards',sample:'Try a sample',clearBoard:'Clear board',foot:'Free and open source (MIT). Data stays in your browser.',exportIcs:'Export .ics',exportJson:'Export JSON',
   todo:'To do',scheduled:'Scheduled',waiting:'Waiting',done:'Done',high:'High',medium:'Medium',low:'Low',skipped:'Skipped as noise',add:'Add',noDate:'No date',empty:'Nothing here yet. Paste some emails above.',save:'Save',del:'Delete',title:'Title',date:'Date',time:'Time',col:'Column',notes:'Notes',pri:'Priority',none:'No emails found.',calEmpty:'No dated items yet.',found:'cards found'},
- ar:{skip:'تخطى للمحتوى',importJson:'استيراد JSON',imported:'كروت اتستوردت',badFile:'الملف مش مقروء',loc:'المكان',link:'الرابط',addCal:'أضف لتقويم جوجل',dlIcs:'نزّل .ics',amount:'المبلغ',end:'ينتهي',search:'ابحث في الكروت',overdue:'متأخر',open:'مفتوح',undo:'تراجع',deleted:'اتحذف الكارت',moveBack:'انقل للعمود السابق',moveNext:'انقل للعمود التالي',brand:'وارد',tag:'الإيميلات المهمة، متنظمة',board:'اللوحة',calendar:'التقويم',paste:'الصق الإيميلات',privacy:'الخصوصية أولاً: النص بيتعالج جوه الصفحة بس. مفيش حاجة بتترفع ولا بنقرا الإيميل بتاعك. افصل بين الإيميلات بسطر ---.',extract:'استخرج الكروت',sample:'جرب مثال',clearBoard:'امسح اللوحة',foot:'مجاني ومفتوح المصدر (MIT). بياناتك بتفضل في متصفحك.',exportIcs:'تصدير .ics',exportJson:'تصدير JSON',
+ ar:{skip:'تخطى للمحتوى',s1t:'١. الصق',s1d:'انسخ الإيميلات من أي تطبيق بريد والصقها هنا.',s2t:'٢. راجع',s2d:'وارد بيلاقي المواعيد النهائية والاجتماعات والطلبات، وانت بتختار اللي يفضل.',s3t:'٣. نفّذ',s3d:'حرّك الكروت على اللوحة وبعدين صدّرها لتقويمك.',faq:'وارد مبيتصلش بصندوق بريدك ومعندوش سيرفر. الكروت بتتحفظ في متصفحك بس.',importJson:'استيراد JSON',imported:'كروت اتستوردت',badFile:'الملف مش مقروء',loc:'المكان',link:'الرابط',addCal:'أضف لتقويم جوجل',dlIcs:'نزّل .ics',amount:'المبلغ',end:'ينتهي',search:'ابحث في الكروت',overdue:'متأخر',open:'مفتوح',undo:'تراجع',deleted:'اتحذف الكارت',moveBack:'انقل للعمود السابق',moveNext:'انقل للعمود التالي',brand:'وارد',tag:'الإيميلات المهمة، متنظمة',board:'اللوحة',calendar:'التقويم',paste:'الصق الإيميلات',privacy:'الخصوصية أولاً: النص بيتعالج جوه الصفحة بس. مفيش حاجة بتترفع ولا بنقرا الإيميل بتاعك. افصل بين الإيميلات بسطر ---.',extract:'استخرج الكروت',sample:'جرب مثال',clearBoard:'امسح اللوحة',foot:'مجاني ومفتوح المصدر (MIT). بياناتك بتفضل في متصفحك.',exportIcs:'تصدير .ics',exportJson:'تصدير JSON',
   todo:'المطلوب',scheduled:'مجدول',waiting:'بانتظار',done:'تم',high:'عالية',medium:'متوسطة',low:'منخفضة',skipped:'اتتجاهل (إعلانات)',add:'أضف',noDate:'بدون تاريخ',empty:'مفيش حاجة لسه. الصق إيميلات فوق.',save:'حفظ',del:'حذف',title:'العنوان',date:'التاريخ',time:'الوقت',col:'العمود',notes:'ملاحظات',pri:'الأولوية',none:'مفيش إيميلات.',calEmpty:'مفيش عناصر بتاريخ.',found:'كروت'}
 };
 const COLS = ['todo','scheduled','waiting','done'];
@@ -34,6 +34,21 @@ Unsubscribe from this newsletter anytime.
 الموضوع: اجتماع المشروع
 اجتماع يوم الخميس الساعة ٣ مساء، يرجى تأكيد الحضور.`;
 
+const SAMPLE_AR = `من: شؤون الطلاب
+الموضوع: عاجل: آخر موعد لتسجيل المواد
+يرجى تأكيد تسجيل المواد قبل ٣ ديسمبر الساعة ٥ مساء.
+---
+من: مدير المشروع
+الموضوع: اجتماع الفريق الأسبوعي
+اجتماع يوم الأحد الساعة ١٠ صباحا في القاعة ٢. يرجى تجهيز تقرير الأسبوع.
+---
+من: المحاسبة
+الموضوع: فاتورة رقم ٢٢٩١
+يرجى دفع مبلغ ١٥٠٠ جنيه قبل ١٥ ديسمبر.
+---
+من: متجر
+الموضوع: خصم ٥٠٪ لحد الليلة
+عرض خاص، لإلغاء الاشتراك اضغط هنا.`;
 function applyLang() {
   document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   document.querySelectorAll('[data-i18n]').forEach(e => e.textContent = t(e.dataset.i18n));
@@ -58,6 +73,7 @@ function toast(msg, undoFn) {
   clearTimeout(toast.h); toast.h = setTimeout(() => el.hidden = true, 6000);
 }
 function render() {
+  $('#how').hidden = cards.length > 0;
   $('#q').placeholder = t('search');
   const op = cards.filter(c => c.column !== 'done').length, od = cards.filter(isOverdue).length;
   $('#stats').innerHTML = cards.length ? op + ' ' + t('open') + (od ? ' · <b class="odue">' + od + ' ' + t('overdue') + '</b>' : '') : '';
@@ -126,7 +142,7 @@ $('#go').onclick = () => {
   pv.querySelectorAll('input').forEach(i => i.onchange = () => pending[+i.dataset.i].keep = i.checked);
   $('#addAll').onclick = () => { pending.filter(p => p.keep).forEach(p => { delete p.keep; delete p.score; delete p.important; if (p.column === 'skip') p.column = 'todo'; cards.push(p); }); save(); say(pending.filter(p => p.keep !== undefined).length + ' ' + t('found')); pv.hidden = true; $('#src').value = ''; render(); };
 };
-$('#sample').onclick = () => { $('#src').value = SAMPLE; $('#go').click(); };
+$('#sample').onclick = () => { $('#src').value = lang === 'ar' ? SAMPLE_AR : SAMPLE; $('#go').click(); };
 $('#clear').onclick = () => { if (confirm(lang === 'ar' ? 'مسح كل الكروت؟' : 'Remove all cards?')) { cards = []; save(); render(); } };
 $('#lang').onclick = () => { lang = lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('wared.lang', lang); applyLang(); };
 function setView(v) { view = v; $('#viewBoard').setAttribute('aria-pressed', v === 'board'); $('#viewCal').setAttribute('aria-pressed', v === 'cal'); $('#board').hidden = v !== 'board'; $('#cal').hidden = v !== 'cal'; $('#viewBoard').classList.toggle('on', v === 'board'); $('#viewCal').classList.toggle('on', v === 'cal'); }

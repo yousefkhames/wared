@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Wared | Emails to kanban cards and calendar</title>
 <meta name="description" content="Paste your emails. Wared finds what matters and turns it into kanban cards and calendar items. Runs in your browser, nothing is uploaded.">
-<link rel="icon" href="favicon.svg"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="logo.svg"><meta name="theme-color" content="#191c4a">
+<link rel="icon" href="favicon.svg"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="logo.svg"><meta property="og:title" content="Wared | Emails to kanban cards and calendar"><meta property="og:description" content="Paste emails, get cards and calendar items. Private, free, Arabic and English."><meta property="og:type" content="website"><meta property="og:image" content="logo.svg"><meta name="theme-color" content="#191c4a">
 <script>try{var th=localStorage.getItem("wared.theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.dataset.theme=th}catch(e){}</script><link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,6 +23,7 @@
   <div class="row"><button id="go" class="primary" data-i18n="extract">Extract cards</button><button id="sample" class="ghost" data-i18n="sample">Try a sample</button><button id="clear" class="ghost" data-i18n="clearBoard">Clear board</button></div>
   <div id="preview" class="preview" hidden></div>
 </section>
+<section class="how" id="how" aria-label="How it works"><ol><li><b data-i18n="s1t">Paste</b><span data-i18n="s1d">Copy emails from any mail app and paste them here.</span></li><li><b data-i18n="s2t">Review</b><span data-i18n="s2d">Wared picks out deadlines, meetings and requests. You choose what to keep.</span></li><li><b data-i18n="s3t">Act</b><span data-i18n="s3d">Move cards on the board, then export to your calendar.</span></li></ol><p class="priv" data-i18n="faq">Wared never connects to your mailbox and has no server. Your cards are saved only in this browser.</p></section>
 <div class="bar" id="bar"><label class="sr" for="q" data-i18n="search">Search</label><input id="q" type="search" data-ph="search"><label class="sr" for="pf" data-i18n="pri">Priority</label><select id="pf"><option value="">—</option><option value="high" data-i18n="high">High</option><option value="medium" data-i18n="medium">Medium</option><option value="low" data-i18n="low">Low</option></select><span id="stats" class="stats"></span></div>
 <section id="board" class="board" aria-label="Kanban board"></section>
 <section id="cal" class="cal" hidden></section>
