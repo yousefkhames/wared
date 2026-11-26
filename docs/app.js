@@ -8,10 +8,11 @@ const COLS = ['todo','scheduled','waiting','done'];
 const $ = s => document.querySelector(s);
 let lang = localStorage.getItem('wared.lang') || (navigator.language || '').startsWith('ar') ? 'ar' : 'en';
 if (localStorage.getItem('wared.lang')) lang = localStorage.getItem('wared.lang');
-let cards = JSON.parse(localStorage.getItem('wared.cards') || '[]');
+let cards = [];
+try { const raw = JSON.parse(localStorage.getItem('wared.cards') || '[]'); cards = Array.isArray(raw) ? raw.filter(c => c && typeof c.title === 'string' && c.id).map(c => ({ priority: 'low', column: 'todo', notes: '', from: '', ...c })) : []; } catch (e) { cards = []; }
 let pending = [], view = 'board';
 const t = k => T[lang][k] || k;
-const save = () => localStorage.setItem('wared.cards', JSON.stringify(cards));
+const save = () => { try { localStorage.setItem('wared.cards', JSON.stringify(cards)); } catch (e) { setTimeout(() => toast(lang === 'ar' ? 'مش قادر أحفظ في المتصفح. صدّر JSON.' : 'Could not save in this browser. Export JSON.'), 0); } };
 const esc = s => String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const uid = () => Math.random().toString(36).slice(2, 10);
 const SAMPLE = `From: registrar@university.edu
