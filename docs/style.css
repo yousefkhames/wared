@@ -79,3 +79,5 @@ dialog input,dialog select,dialog textarea{width:100%;padding:8px;border:1px sol
 @media print{.top,#inbox,.bar,.how,footer,.mv,.toast,.clr,.keys{display:none!important}body{background:#fff;color:#000}
  .board{display:block!important}.col{background:none;break-inside:avoid;margin-bottom:12px;border:1px solid #bbb}.card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
  #cal:not([hidden]){display:block}}
+.tg-study{background:#e0ecff!important;color:#1d4ea0}.tg-bills{background:#fff1d6!important;color:#8a5a00}.tg-health{background:#dff5e8!important;color:#136b3a}.tg-work{background:#ece3ff!important;color:#5530a8}
+:root[data-theme=dark] .tg{filter:brightness(.8) saturate(1.1)}

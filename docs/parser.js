@@ -121,6 +121,11 @@
     if (!m) return null;
     let h = +m[4] % 12; if (/p/i.test(m[6])) h += 12; return { h, min: +(m[5] || 0) };
   }
+  const TAGS = [['study', /\b(exam|assignment|lecture|course|professor|semester|homework|grade|university|campus)\b|امتحان|محاضرة|مادة|جامعة|دكتور|تسليم/i],
+    ['bills', /\b(invoice|payment|bill|receipt|subscription|rent|tax)\b|فاتورة|دفع|إيجار|ايجار|اشتراك/i],
+    ['health', /\b(doctor|clinic|appointment|prescription|lab|hospital)\b|دكتور|عيادة|تحليل|مستشفى/i],
+    ['work', /\b(meeting|project|client|sprint|report|deadline|manager|team)\b|اجتماع|مشروع|عميل|تقرير|فريق/i]];
+  function findTag(all) { for (const [k, r] of TAGS) if (r.test(all)) return k; return null; }
   function parseEmail(block, now) {
     block = stripQuoted(block);
     now = headerDate(block) || now || new Date();
@@ -145,6 +150,7 @@
       from, fromName: (from.replace(/<[^>]*>/g, '').replace(/["']/g, '').trim() || from), kind, priority, column, score,
       date: date ? ymd(date) : null,
       time: tm ? pad(tm.h) + ':' + pad(tm.min) : null,
+      tag: findTag(all),
       notes: actions.join('\n'),
       endTime: (e => e ? pad(e.h) + ':' + pad(e.min) : null)(findEnd(all)),
       ...extras(all),

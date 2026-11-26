@@ -50,4 +50,6 @@ Meeting Friday at 4 pm.`;
 const o = P.parseAll(outlook, now); assert.strictEqual(o.length, 2); assert.strictEqual(o[0].date, '2026-12-08');
 const fwd = P.parseAll('From: me@x.com\nSubject: Fwd: Deadline\n---------- Forwarded message ---------\nFrom: boss@x.com\nSubject: Deadline\nSubmit by 12 Dec 2026', now);
 assert.strictEqual(fwd.length, 1);
+assert.strictEqual(P.parseEmail('Subject: Invoice\npay the bill', now).tag, 'bills');
+assert.strictEqual(P.parseEmail('الموضوع: امتحان\nامتحان الغد', now).tag, 'study');
 console.log('all tests passed');
