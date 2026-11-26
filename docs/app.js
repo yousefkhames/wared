@@ -155,7 +155,7 @@ function openEdit(id) {
 }
 $('#q').oninput = $('#pf').onchange = render;
 $('#go').onclick = () => {
-  pending = Wared.parseAll($('#src').value).map(p => ({ ...p, id: uid(), keep: p.column !== 'skip' }));
+  pending = Wared.parseAll($('#src').value.slice(0, 2000000)).slice(0, 500).map(p => ({ ...p, id: uid(), keep: p.column !== 'skip' }));
   const pv = $('#preview'); pv.hidden = false;
   if (!pending.length) { pv.innerHTML = `<div class="empty">${t('none')}</div>`; return; }
   pv.innerHTML = pending.map((p, i) => `<label class="pv"><input type="checkbox" data-i="${i}" ${p.keep ? 'checked' : ''}><span class="t"><b>${esc(p.title)}</b><small>${esc(p.from)} · ${t(p.priority)} · ${fmtDate(p)}${p.column === 'skip' ? ' · ' + t('skipped') : ''}</small></span></label>`).join('') + `<div class="row"><button class="primary" id="addAll">${t('add')}</button></div>`;

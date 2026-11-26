@@ -56,4 +56,6 @@ assert.strictEqual(P.parseEmail('Subject: Standup\nStandup every Monday at 9:00'
 assert.strictEqual(P.parseEmail('الموضوع: اجتماع\nاجتماع كل أسبوع', now).repeat, 'WEEKLY');
 assert(P.toICS([{ id: 'r', title: 'S', date: '2026-12-07', repeat: 'WEEKLY', from: '', notes: '' }], now).includes('RRULE:FREQ=WEEKLY'));
 assert(P.parseEmail('Subject: Urgent\nPay 3 Dec 2026', now).why.includes('keyword'));
+const big = Array.from({ length: 800 }, (_, i) => 'From: s' + i + '@x.com\nSubject: Task ' + i + '\nPlease submit by 12 Dec 2026 at 5 pm.').join('\n---\n');
+const t0 = Date.now(); const bigR = P.parseAll(big, now); assert.strictEqual(bigR.length, 800); assert(Date.now() - t0 < 2000, 'parser too slow');
 console.log('all tests passed');
