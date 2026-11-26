@@ -58,4 +58,6 @@ assert(P.toICS([{ id: 'r', title: 'S', date: '2026-12-07', repeat: 'WEEKLY', fro
 assert(P.parseEmail('Subject: Urgent\nPay 3 Dec 2026', now).why.includes('keyword'));
 const big = Array.from({ length: 800 }, (_, i) => 'From: s' + i + '@x.com\nSubject: Task ' + i + '\nPlease submit by 12 Dec 2026 at 5 pm.').join('\n---\n');
 const t0 = Date.now(); const bigR = P.parseAll(big, now); assert.strictEqual(bigR.length, 800); assert(Date.now() - t0 < 2000, 'parser too slow');
+assert(!P.toICS([{ id: 'z', title: 'Z', date: '2026-12-01', from: '', notes: '' }], now, { reminder: 0 }).includes('VALARM'));
+assert(P.toICS([{ id: 'z', title: 'Z', date: '2026-12-01', from: '', notes: '' }], now, { reminder: 60 }).includes('TRIGGER:-PT60M'));
 console.log('all tests passed');

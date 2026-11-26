@@ -169,7 +169,8 @@
   function parseAll(text, now) { return splitEmails(text).map(b => parseEmail(b, now)); }
 
   function icsEscape(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
-  function toICS(cards, now) {
+  function toICS(cards, now, opts) {
+    const rem = (opts && opts.reminder !== undefined) ? opts.reminder : 30;
     now = now || new Date();
     const stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
     const out = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Wared//EN', 'CALSCALE:GREGORIAN'];
@@ -185,7 +186,7 @@
       }
       if (c.repeat) out.push('RRULE:FREQ=' + c.repeat);
       if (c.location) out.push('LOCATION:' + icsEscape(c.location));
-      out.push('BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEscape(c.title), 'END:VALARM');
+      if (rem > 0) out.push('BEGIN:VALARM', 'TRIGGER:-PT' + rem + 'M', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEscape(c.title), 'END:VALARM');
       out.push('SUMMARY:' + icsEscape(c.title), 'DESCRIPTION:' + icsEscape((c.from ? 'From: ' + c.from + '\n' : '') + (c.link ? 'Link: ' + c.link + '\n' : '') + (c.notes || '')), 'END:VEVENT');
     });
     out.push('END:VCALENDAR');
