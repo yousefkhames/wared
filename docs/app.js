@@ -154,7 +154,7 @@ $('#go').onclick = () => {
 $('#sample').onclick = () => { $('#src').value = lang === 'ar' ? SAMPLE_AR : SAMPLE; $('#go').click(); };
 $('#clear').onclick = () => { if (confirm(lang === 'ar' ? 'مسح كل الكروت؟' : 'Remove all cards?')) { cards = []; save(); render(); } };
 $('#lang').onclick = () => { lang = lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('wared.lang', lang); applyLang(); };
-function setView(v) { view = v; $('#viewBoard').setAttribute('aria-pressed', v === 'board'); $('#viewCal').setAttribute('aria-pressed', v === 'cal'); $('#board').hidden = v !== 'board'; $('#cal').hidden = v !== 'cal'; $('#viewBoard').classList.toggle('on', v === 'board'); $('#viewCal').classList.toggle('on', v === 'cal'); }
+function setView(v) { view = v; if (v === 'cal') { const up = cards.filter(c => c.date && c.date >= ymd(new Date())).sort((x, y) => x.date.localeCompare(y.date))[0]; if (up) calM = new Date(up.date.slice(0, 4), +up.date.slice(5, 7) - 1, 1); renderCal(); } $('#viewBoard').setAttribute('aria-pressed', v === 'board'); $('#viewCal').setAttribute('aria-pressed', v === 'cal'); $('#board').hidden = v !== 'board'; $('#cal').hidden = v !== 'cal'; $('#viewBoard').classList.toggle('on', v === 'board'); $('#viewCal').classList.toggle('on', v === 'cal'); }
 $('#viewBoard').onclick = () => setView('board'); $('#viewCal').onclick = () => setView('cal');
 function dl(name, type, data) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name; a.click(); }
 $('#ics').onclick = () => dl('wared.ics', 'text/calendar', Wared.toICS(cards.filter(c => c.column !== 'done')));
