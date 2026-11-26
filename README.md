@@ -10,6 +10,18 @@ Turn important emails into kanban cards and calendar items. Paste emails, Wared 
 - Priority from keywords, noise filter, review step before anything is added
 - Calendar list and `.ics` export (Google, Apple, Outlook)
 
+## Improvement log (10 rounds)
+1. Parser: Arabic months and relative dates, email Date header as reference, time ranges, links, location, amounts, quoted replies stripped, calendar alarms
+2. Accessibility: skip link, labels, focus rings, live announcements, keyboard cards, contrast, reduced motion
+3. Mobile: snap-scroll columns, large touch targets, move buttons
+4. Design: dark mode, gradient header, shadows, empty state, Arabic font stack
+5. Search, priority filter, open/overdue stats, undo delete
+6. Month-grid calendar with RTL week start
+7. Richer cards, per-card .ics and Google Calendar link
+8. Installable offline PWA, safe JSON import
+9. Onboarding steps, privacy note, share metadata, Arabic sample
+10. QA pass in a real browser, hidden-view bug fixed, more tests
+
 ## Honest limits
 It uses rules, not an AI model, so unusual phrasing can be missed. You review and edit every card. Automatic inbox sync is not built: that needs an OAuth app and your explicit consent, and is on the roadmap as an opt-in Gmail add-on.
 
