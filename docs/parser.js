@@ -126,6 +126,12 @@
     ['health', /\b(doctor|clinic|appointment|prescription|lab|hospital)\b|دكتور|عيادة|تحليل|مستشفى/i],
     ['work', /\b(meeting|project|client|sprint|report|deadline|manager|team)\b|اجتماع|مشروع|عميل|تقرير|فريق/i]];
   function findTag(all) { for (const [k, r] of TAGS) if (r.test(all)) return k; return null; }
+  function findRepeat(all) {
+    if (/\bevery\s+(day|morning|night)\b|\bdaily\b|كل يوم|يوميا|يومياً/i.test(all)) return 'DAILY';
+    if (/\bevery\s+(week|mon|tue|wed|thu|fri|sat|sun)|\bweekly\b|كل أسبوع|كل اسبوع|أسبوعيا|اسبوعيا|كل (?:يوم )?(?:الأحد|الاثنين|الثلاثاء|الأربعاء|الخميس|الجمعة|السبت)/i.test(all)) return 'WEEKLY';
+    if (/\bevery\s+month\b|\bmonthly\b|كل شهر|شهريا|شهرياً/i.test(all)) return 'MONTHLY';
+    return null;
+  }
   function parseEmail(block, now) {
     block = stripQuoted(block);
     now = headerDate(block) || now || new Date();
@@ -151,6 +157,7 @@
       date: date ? ymd(date) : null,
       time: tm ? pad(tm.h) + ':' + pad(tm.min) : null,
       tag: findTag(all),
+      repeat: findRepeat(all),
       notes: actions.join('\n'),
       endTime: (e => e ? pad(e.h) + ':' + pad(e.min) : null)(findEnd(all)),
       ...extras(all),
@@ -175,6 +182,7 @@
         const nx = new Date(c.date + 'T00:00:00'); nx.setDate(nx.getDate() + 1);
         out.push('DTSTART;VALUE=DATE:' + d, 'DTEND;VALUE=DATE:' + ymd(nx).replace(/-/g, ''));
       }
+      if (c.repeat) out.push('RRULE:FREQ=' + c.repeat);
       if (c.location) out.push('LOCATION:' + icsEscape(c.location));
       out.push('BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEscape(c.title), 'END:VALARM');
       out.push('SUMMARY:' + icsEscape(c.title), 'DESCRIPTION:' + icsEscape((c.from ? 'From: ' + c.from + '\n' : '') + (c.link ? 'Link: ' + c.link + '\n' : '') + (c.notes || '')), 'END:VEVENT');

@@ -52,4 +52,7 @@ const fwd = P.parseAll('From: me@x.com\nSubject: Fwd: Deadline\n---------- Forwa
 assert.strictEqual(fwd.length, 1);
 assert.strictEqual(P.parseEmail('Subject: Invoice\npay the bill', now).tag, 'bills');
 assert.strictEqual(P.parseEmail('الموضوع: امتحان\nامتحان الغد', now).tag, 'study');
+assert.strictEqual(P.parseEmail('Subject: Standup\nStandup every Monday at 9:00', now).repeat, 'WEEKLY');
+assert.strictEqual(P.parseEmail('الموضوع: اجتماع\nاجتماع كل أسبوع', now).repeat, 'WEEKLY');
+assert(P.toICS([{ id: 'r', title: 'S', date: '2026-12-07', repeat: 'WEEKLY', from: '', notes: '' }], now).includes('RRULE:FREQ=WEEKLY'));
 console.log('all tests passed');
