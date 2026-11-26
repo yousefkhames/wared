@@ -159,7 +159,7 @@ $('#go').onclick = () => {
   if (!pending.length) { pv.innerHTML = `<div class="empty">${t('none')}</div>`; return; }
   pv.innerHTML = pending.map((p, i) => `<label class="pv"><input type="checkbox" data-i="${i}" ${p.keep ? 'checked' : ''}><span class="t"><b>${esc(p.title)}</b><small>${esc(p.from)} · ${t(p.priority)} · ${fmtDate(p)}${p.column === 'skip' ? ' · ' + t('skipped') : ''}</small></span></label>`).join('') + `<div class="row"><button class="primary" id="addAll">${t('add')}</button></div>`;
   pv.querySelectorAll('input').forEach(i => i.onchange = () => pending[+i.dataset.i].keep = i.checked);
-  $('#addAll').onclick = () => { let dup = 0; pending.filter(p => p.keep).forEach(p => { if (cards.some(c => c.title.toLowerCase() === p.title.toLowerCase() && c.date === p.date)) { dup++; return; } delete p.keep; delete p.score; delete p.important; if (p.column === 'skip') p.column = 'todo'; cards.push(p); }); if (dup) toast(dup + ' ' + t('dups')); save(); say(pending.filter(p => p.keep !== undefined).length + ' ' + t('found')); pv.hidden = true; $('#src').value = ''; render(); };
+  $('#addAll').onclick = () => { let dup = 0; pending.filter(p => p.keep).forEach(p => { if (cards.some(c => c.title.toLowerCase() === p.title.toLowerCase() && c.date === p.date)) { dup++; return; } delete p.keep; delete p.score; delete p.important; if (p.column === 'skip') p.column = 'todo'; cards.push(p); }); if (dup) toast(dup + ' ' + t('dups')); save(); say(pending.filter(p => p.keep !== undefined).length + ' ' + t('found')); pv.hidden = true; $('#src').value = ''; try { localStorage.removeItem('wared.draft'); } catch (e) {} render(); };
 };
 $('#sample').onclick = () => { $('#src').value = lang === 'ar' ? SAMPLE_AR : SAMPLE; $('#go').click(); };
 $('#clear').onclick = () => { if (confirm(lang === 'ar' ? 'مسح كل الكروت؟' : 'Remove all cards?')) { cards = []; save(); render(); } };
@@ -187,4 +187,6 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'n') { e.preventDefault(); $('#src').focus(); }
   else if (e.key === 'c') setView(view === 'board' ? 'cal' : 'board');
 });
+try { const dr = localStorage.getItem('wared.draft'); if (dr) $('#src').value = dr; } catch (e) {}
+$('#src').addEventListener('input', () => { try { localStorage.setItem('wared.draft', $('#src').value); } catch (e) {} });
 applyLang();
