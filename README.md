@@ -10,6 +10,15 @@
 |---|---|---|
 | ![Calendar](assets/calendar.png) | ![Arabic mobile](assets/mobile-arabic.png) | ![Dark](assets/board-dark.png) |
 
+## Screenshots
+
+Captured from the live site (https://yousefkhames.github.io/wared/).
+
+<p>
+  <img src="docs/screenshots/live-desktop.png" alt="wared desktop view" width="640">
+  <img src="docs/screenshots/live-mobile.png" alt="wared mobile view" width="200">
+</p>
+
 ## What it does
 Wared reads pasted email text, finds what matters (deadlines, meetings, invoices, requests), ranks it, drops newsletters, and builds a board plus calendar entries you can import anywhere. You review every card before it is added.
 
