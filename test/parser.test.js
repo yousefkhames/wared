@@ -65,4 +65,5 @@ assert.strictEqual(P.parseAll('', now).length, 0); assert.strictEqual(P.parseAll
 assert.strictEqual(P.parseEmail('Subject: Big sale\n70% off, unsubscribe below', now).column, 'skip');
 assert.notStrictEqual(P.parseEmail('Subject: Interview Tuesday 3 pm\nPlease confirm. Unsubscribe from alerts at the bottom.', now).column, 'skip');
 assert.strictEqual(P.parseEmail('Subject: x\nhello <script>alert(1)</script>', now).title, 'x');
+assert.deepStrictEqual(P.findTime('اجتماع الساعة ٣ مساء، يرجى'), { h: 15, min: 0 });
 console.log('all tests passed');
