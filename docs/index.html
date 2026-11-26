@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wared | Emails to kanban cards and calendar</title>
+<meta name="description" content="Paste your emails. Wared finds what matters and turns it into kanban cards and calendar items. Runs in your browser, nothing is uploaded.">
+<link rel="icon" href="favicon.svg"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><img src="logo.svg" alt="" width="36" height="36"><div><b data-i18n="brand">Wared</b><small data-i18n="tag">Important emails, sorted</small></div></div>
+  <nav><button id="viewBoard" class="tab on" data-i18n="board">Board</button><button id="viewCal" class="tab" data-i18n="calendar">Calendar</button>
+  <button id="lang" class="ghost">العربية</button></nav>
+</header>
+<main>
+<section class="panel" id="inbox">
+  <h2 data-i18n="paste">Paste emails</h2>
+  <p class="hint" data-i18n="privacy">Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.</p>
+  <textarea id="src" rows="9" spellcheck="false"></textarea>
+  <div class="row"><button id="go" class="primary" data-i18n="extract">Extract cards</button><button id="sample" class="ghost" data-i18n="sample">Try a sample</button><button id="clear" class="ghost" data-i18n="clearBoard">Clear board</button></div>
+  <div id="preview" class="preview" hidden></div>
+</section>
+<section id="board" class="board"></section>
+<section id="cal" class="cal" hidden></section>
+</main>
+<footer><span data-i18n="foot">Free and open source (MIT). Data stays in your browser.</span>
+<span><button id="ics" class="ghost" data-i18n="exportIcs">Export .ics</button> <button id="exp" class="ghost" data-i18n="exportJson">Export JSON</button></span></footer>
+<dialog id="dlg"><form method="dialog" id="edit"></form></dialog>
+<script src="parser.js"></script><script src="app.js"></script>
+</body></html>
