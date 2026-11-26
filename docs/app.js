@@ -63,6 +63,8 @@ function cardHTML(c) {
   return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b>${esc(c.title)}</b><small title="${esc(c.from)}">${esc(c.fromName || c.from)}</small><div><span class="badge">${t(c.priority)}</span><span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}</span>${c.amount ? '<span class="badge">' + esc(c.amount) + '</span>' : ''}${c.location ? '<span class="badge">📍 ' + esc(c.location) + '</span>' : ''}${c.link ? '<span class="badge">🔗</span>' : ''}</div><div class="mv"><button class="mvb" data-mv="-1" aria-label="${t('moveBack')}">${lang === 'ar' ? '›' : '‹'}</button><button class="mvb" data-mv="1" aria-label="${t('moveNext')}">${lang === 'ar' ? '‹' : '›'}</button></div></div>`;
 }
 const isOverdue = c => c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
+const PR = { high: 0, medium: 1, low: 2 };
+const byUrgency = (a, b) => (a.date || '9999').localeCompare(b.date || '9999') || PR[a.priority] - PR[b.priority];
 function visible() {
   const q = ($('#q').value || '').toLowerCase().trim(), p = $('#pf').value;
   return cards.filter(c => (!p || c.priority === p) && (!q || (c.title + ' ' + c.from + ' ' + c.notes).toLowerCase().includes(q)));
@@ -78,7 +80,7 @@ function render() {
   const op = cards.filter(c => c.column !== 'done').length, od = cards.filter(isOverdue).length;
   $('#stats').innerHTML = cards.length ? op + ' ' + t('open') + (od ? ' · <b class="odue">' + od + ' ' + t('overdue') + '</b>' : '') : '';
   const b = $('#board');
-  b.innerHTML = COLS.map(col => { const l = visible().filter(c => c.column === col);
+  b.innerHTML = COLS.map(col => { const l = visible().filter(c => c.column === col).sort(byUrgency);
     return `<div class="col" data-col="${col}"><h3>${t(col)}<span>${l.length}</span></h3>${l.map(cardHTML).join('') || '<div class="empty">' + (cards.length ? '' : t('empty')) + '</div>'}</div>`; }).join('');
   b.querySelectorAll('.card').forEach(el => {
     el.addEventListener('dragstart', e => e.dataTransfer.setData('text', el.dataset.id));
