@@ -94,4 +94,5 @@ $('#viewBoard').onclick = () => setView('board'); $('#viewCal').onclick = () => 
 function dl(name, type, data) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name; a.click(); }
 $('#ics').onclick = () => dl('wared.ics', 'text/calendar', Wared.toICS(cards.filter(c => c.column !== 'done')));
 $('#exp').onclick = () => dl('wared.json', 'application/json', JSON.stringify(cards, null, 2));
+$('#theme').onclick = () => { const d = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = d; localStorage.setItem('wared.theme', d); };
 applyLang();
