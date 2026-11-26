@@ -36,4 +36,7 @@ assert.deepStrictEqual(P.findTime('الساعة ٢ ظهرا'), { h: 14, min: 0 }
 assert.strictEqual(P.parseEmail('From: "Dr. Mona" <mona@x.edu>\nSubject: Hi\nbody', now).fromName, 'Dr. Mona');
 const longIcs = P.toICS([{ id: 'x', title: 'A'.repeat(200), date: '2026-12-01', from: '', notes: '' }], now);
 assert(longIcs.split('\r\n').every(l => l.length <= 75)); assert(longIcs.endsWith('\r\n'));
+assert.strictEqual(P.findDate('due in 2 weeks', now).getDate(), 10);
+assert.strictEqual(P.findDate('بعد ٣ ايام', now).getDate(), 29);
+assert.strictEqual(P.findDate('payment on the 5th', now).getMonth(), 11);
 console.log('all tests passed');

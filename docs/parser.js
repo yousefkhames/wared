@@ -84,6 +84,12 @@
       let diff = (wd - base.getDay() + 7) % 7; if (diff === 0) diff = 7;
       base.setDate(base.getDate() + diff); return base;
     }
+    m = t.match(/\bin\s+(\d+)\s+weeks?\b/i) || t.match(/بعد\s*(\d+)\s*(?:اسابيع|أسابيع|اسبوع|أسبوع)/);
+    if (m) { base.setDate(base.getDate() + 7 * +m[1]); return base; }
+    m = t.match(/بعد\s*(\d+)\s*(?:ايام|أيام|يوم)/);
+    if (m) { base.setDate(base.getDate() + +m[1]); return base; }
+    m = t.match(/\bthe\s+(\d{1,2})(?:st|nd|rd|th)\b/i);
+    if (m && +m[1] >= 1 && +m[1] <= 31) { let d = new Date(now.getFullYear(), now.getMonth(), +m[1]); if (d < base) d = new Date(now.getFullYear(), now.getMonth() + 1, +m[1]); return d; }
     m = t.match(/\bin\s+(\d+)\s+days?\b/i);
     if (m) { base.setDate(base.getDate() + +m[1]); return base; }
     return null;
