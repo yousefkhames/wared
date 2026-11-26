@@ -60,4 +60,9 @@ const big = Array.from({ length: 800 }, (_, i) => 'From: s' + i + '@x.com\nSubje
 const t0 = Date.now(); const bigR = P.parseAll(big, now); assert.strictEqual(bigR.length, 800); assert(Date.now() - t0 < 2000, 'parser too slow');
 assert(!P.toICS([{ id: 'z', title: 'Z', date: '2026-12-01', from: '', notes: '' }], now, { reminder: 0 }).includes('VALARM'));
 assert(P.toICS([{ id: 'z', title: 'Z', date: '2026-12-01', from: '', notes: '' }], now, { reminder: 60 }).includes('TRIGGER:-PT60M'));
+// edge cases: promos stay out, real work stays in, empty input is safe
+assert.strictEqual(P.parseAll('', now).length, 0); assert.strictEqual(P.parseAll('   \n  ', now).length, 0);
+assert.strictEqual(P.parseEmail('Subject: Big sale\n70% off, unsubscribe below', now).column, 'skip');
+assert.notStrictEqual(P.parseEmail('Subject: Interview Tuesday 3 pm\nPlease confirm. Unsubscribe from alerts at the bottom.', now).column, 'skip');
+assert.strictEqual(P.parseEmail('Subject: x\nhello <script>alert(1)</script>', now).title, 'x');
 console.log('all tests passed');
