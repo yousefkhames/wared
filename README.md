@@ -20,7 +20,8 @@ Wared reads pasted email text, finds what matters (deadlines, meetings, invoices
 - Detects meeting links (Zoom, Meet, Teams), locations and amounts
 - Priority scoring, noise filter, duplicate skipping, sender names
 - Month calendar, per-card Google Calendar link, `.ics` export with 30-minute alarms
-- Search, priority filter, overdue count, undo, JSON import/export
+- Auto tags (study, bills, health, work), recurring events (RRULE), a "needs attention" strip, a "why this card" explanation
+- Search, priority filter, add by hand, snooze, overdue count, undo, copy agenda as text, JSON import/export, choice of calendar reminder
 - Installable offline PWA, dark mode, print view, keyboard shortcuts (`/`, `n`, `c`)
 - Accessible: skip link, labels, focus rings, screen-reader announcements, reduced motion
 
@@ -36,6 +37,8 @@ git clone https://github.com/yousefkhames/wared
 cd wared/docs && python3 -m http.server 8000   # or just open docs/index.html
 node test/parser.test.js                        # parser tests
 ```
+
+Rounds 11 to 38 (each pushed after a real-browser check in English and Arabic, desktop and phone width): Arabic time forms, sender names, duplicate skipping, urgency sorting, relative due labels, clear-done with undo, shortcuts, print view, proper .ics folding, more date phrases, Outlook and forwarded-mail handling, tags, snooze, recurring events, needs-attention strip, draft autosave, explanations, copy agenda, resilient storage, performance and edge-case tests, accessibility focus handling, hand-added cards, reminder choice, tab title count, and phone layout fixes.
 
 ## Honest limits
 It uses rules, not an AI model, so unusual phrasing can be missed. That is why every card goes through a review step. There is no inbox sync: that would need a Gmail OAuth app and your explicit consent, and it is not built. Dates without a year assume the nearest upcoming one.
