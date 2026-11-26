@@ -34,3 +34,15 @@ dialog input,dialog select,dialog textarea{width:100%;padding:8px;border:1px sol
 .card:focus-visible{outline:3px solid var(--coral)}
 .badge.due{background:#ffe0da;color:#8f2412}.hint,.card small,.col h3 span{color:#565b82}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+.mv{display:flex;justify-content:space-between;margin-top:8px}.mvb{padding:2px 12px;min-width:44px;min-height:36px;border-radius:8px;font-size:18px;line-height:1;background:#f1f2fb}
+@media(min-width:901px){.mv{display:none}.card:hover .mv,.card:focus-within .mv{display:flex}}
+@media(max-width:700px){
+ main{padding:12px}.top{padding:10px 12px}.brand small{display:none}
+ .board{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding-bottom:10px;margin-inline:-12px;padding-inline:12px}
+ .col{flex:0 0 86%;scroll-snap-align:center}
+ button{min-height:44px}textarea{font-size:16px}
+ .row button{flex:1}.panel{padding:14px}
+ .day{flex-direction:column;gap:2px}
+ footer{flex-direction:column;align-items:stretch}footer span:last-child{display:flex;gap:8px}footer button{flex:1}
+}

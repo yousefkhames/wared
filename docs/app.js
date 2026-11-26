@@ -1,7 +1,7 @@
 const T = {
- en:{brand:'Wared',tag:'Important emails, sorted',board:'Board',calendar:'Calendar',paste:'Paste emails',privacy:'Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.',extract:'Extract cards',sample:'Try a sample',clearBoard:'Clear board',foot:'Free and open source (MIT). Data stays in your browser.',exportIcs:'Export .ics',exportJson:'Export JSON',
+ en:{skip:'Skip to content',moveBack:'Move to previous column',moveNext:'Move to next column',brand:'Wared',tag:'Important emails, sorted',board:'Board',calendar:'Calendar',paste:'Paste emails',privacy:'Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.',extract:'Extract cards',sample:'Try a sample',clearBoard:'Clear board',foot:'Free and open source (MIT). Data stays in your browser.',exportIcs:'Export .ics',exportJson:'Export JSON',
   todo:'To do',scheduled:'Scheduled',waiting:'Waiting',done:'Done',high:'High',medium:'Medium',low:'Low',skipped:'Skipped as noise',add:'Add',noDate:'No date',empty:'Nothing here yet. Paste some emails above.',save:'Save',del:'Delete',title:'Title',date:'Date',time:'Time',col:'Column',notes:'Notes',pri:'Priority',none:'No emails found.',calEmpty:'No dated items yet.',found:'cards found'},
- ar:{brand:'وارد',tag:'الإيميلات المهمة، متنظمة',board:'اللوحة',calendar:'التقويم',paste:'الصق الإيميلات',privacy:'الخصوصية أولاً: النص بيتعالج جوه الصفحة بس. مفيش حاجة بتترفع ولا بنقرا الإيميل بتاعك. افصل بين الإيميلات بسطر ---.',extract:'استخرج الكروت',sample:'جرب مثال',clearBoard:'امسح اللوحة',foot:'مجاني ومفتوح المصدر (MIT). بياناتك بتفضل في متصفحك.',exportIcs:'تصدير .ics',exportJson:'تصدير JSON',
+ ar:{skip:'تخطى للمحتوى',moveBack:'انقل للعمود السابق',moveNext:'انقل للعمود التالي',brand:'وارد',tag:'الإيميلات المهمة، متنظمة',board:'اللوحة',calendar:'التقويم',paste:'الصق الإيميلات',privacy:'الخصوصية أولاً: النص بيتعالج جوه الصفحة بس. مفيش حاجة بتترفع ولا بنقرا الإيميل بتاعك. افصل بين الإيميلات بسطر ---.',extract:'استخرج الكروت',sample:'جرب مثال',clearBoard:'امسح اللوحة',foot:'مجاني ومفتوح المصدر (MIT). بياناتك بتفضل في متصفحك.',exportIcs:'تصدير .ics',exportJson:'تصدير JSON',
   todo:'المطلوب',scheduled:'مجدول',waiting:'بانتظار',done:'تم',high:'عالية',medium:'متوسطة',low:'منخفضة',skipped:'اتتجاهل (إعلانات)',add:'أضف',noDate:'بدون تاريخ',empty:'مفيش حاجة لسه. الصق إيميلات فوق.',save:'حفظ',del:'حذف',title:'العنوان',date:'التاريخ',time:'الوقت',col:'العمود',notes:'ملاحظات',pri:'الأولوية',none:'مفيش إيميلات.',calEmpty:'مفيش عناصر بتاريخ.',found:'كروت'}
 };
 const COLS = ['todo','scheduled','waiting','done'];
@@ -45,7 +45,7 @@ function fmtDate(c) { if (!c.date) return t('noDate'); return new Date(c.date + 
 const say = m => { const l = $('#live'); l.textContent = ''; setTimeout(() => l.textContent = m, 30); };
 function cardHTML(c) {
   const overdue = c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
-  return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b>${esc(c.title)}</b><small>${esc(c.from)}</small><div><span class="badge">${t(c.priority)}</span><span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}</span></div></div>`;
+  return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b>${esc(c.title)}</b><small>${esc(c.from)}</small><div><span class="badge">${t(c.priority)}</span><span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}</span></div><div class="mv"><button class="mvb" data-mv="-1" aria-label="${t('moveBack')}">${lang === 'ar' ? '›' : '‹'}</button><button class="mvb" data-mv="1" aria-label="${t('moveNext')}">${lang === 'ar' ? '‹' : '›'}</button></div></div>`;
 }
 function render() {
   const b = $('#board');
@@ -53,6 +53,7 @@ function render() {
     return `<div class="col" data-col="${col}"><h3>${t(col)}<span>${l.length}</span></h3>${l.map(cardHTML).join('') || '<div class="empty">' + (cards.length ? '' : t('empty')) + '</div>'}</div>`; }).join('');
   b.querySelectorAll('.card').forEach(el => {
     el.addEventListener('dragstart', e => e.dataTransfer.setData('text', el.dataset.id));
+    el.querySelectorAll('.mvb').forEach(bt => bt.addEventListener('click', e => { e.stopPropagation(); const c = cards.find(x => x.id === el.dataset.id); const i = COLS.indexOf(c.column) + +bt.dataset.mv; if (i >= 0 && i < COLS.length) { c.column = COLS[i]; save(); render(); say(c.title + ' → ' + t(c.column)); } }));
     el.addEventListener('click', () => openEdit(el.dataset.id));
     el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEdit(el.dataset.id); } });
   });
