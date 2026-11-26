@@ -75,9 +75,27 @@ function render() {
     el.addEventListener('dragleave', () => el.classList.remove('over'));
     el.addEventListener('drop', e => { e.preventDefault(); const c = cards.find(x => x.id === e.dataTransfer.getData('text')); if (c) { c.column = el.dataset.col; save(); render(); } });
   });
-  const dated = cards.filter(c => c.date).sort((a, b) => (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')));
-  $('#cal').innerHTML = dated.length ? dated.map(c => `<div class="day"><div class="d">${fmtDate({ date: c.date })}</div><div class="it"><b>${esc(c.title)}</b> <small>${c.time || ''}</small><br><small>${esc(c.from)}</small></div></div>`).join('') : `<div class="empty">${t('calEmpty')}</div>`;
+  renderCal();
 }
+let calM = new Date(); calM.setDate(1);
+function renderCal() {
+  const loc = lang === 'ar' ? 'ar-EG' : 'en-GB', y = calM.getFullYear(), m = calM.getMonth();
+  const first = new Date(y, m, 1), start = (first.getDay() + (lang === 'ar' ? 1 : 6)) % 7; // week starts Saturday (ar) or Monday (en)
+  const days = new Date(y, m + 1, 0).getDate(), today = ymd(new Date());
+  const by = {}; cards.filter(c => c.date).forEach(c => (by[c.date] = by[c.date] || []).push(c));
+  const wk = []; for (let i = 0; i < 7; i++) { const d = new Date(2026, 10, (lang === 'ar' ? 21 : 23) + i); wk.push(d.toLocaleDateString(loc, { weekday: 'short' })); }
+  let cells = wk.map(w => `<div class="wd">${w}</div>`).join('') + '<div></div>'.repeat(start);
+  for (let d = 1; d <= days; d++) {
+    const k = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0'), l = by[k] || [];
+    cells += `<div class="dc${k === today ? ' today' : ''}"><span class="dn">${d.toLocaleString(loc)}</span>${l.slice(0, 2).map(c => `<span class="ev ${c.priority}" title="${esc(c.title)}">${esc(c.title)}</span>`).join('')}${l.length > 2 ? `<span class="more">+${l.length - 2}</span>` : ''}</div>`;
+  }
+  const mine = cards.filter(c => c.date && c.date.startsWith(y + '-' + String(m + 1).padStart(2, '0'))).sort((a, b) => (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')));
+  $('#cal').innerHTML = `<div class="calh"><button id="pm" aria-label="Previous month">${lang === 'ar' ? '›' : '‹'}</button><b>${calM.toLocaleDateString(loc, { month: 'long', year: 'numeric' })}</b><button id="nm" aria-label="Next month">${lang === 'ar' ? '‹' : '›'}</button></div><div class="grid">${cells}</div>` +
+    (mine.length ? mine.map(c => `<div class="day"><div class="d">${fmtDate({ date: c.date })}</div><div class="it"><b>${esc(c.title)}</b> <small>${c.time || ''}${c.endTime ? '–' + c.endTime : ''}</small><br><small>${esc(c.from)}</small></div></div>`).join('') : `<div class="empty">${t('calEmpty')}</div>`);
+  $('#pm').onclick = () => { calM = new Date(y, m - 1, 1); renderCal(); };
+  $('#nm').onclick = () => { calM = new Date(y, m + 1, 1); renderCal(); };
+}
+function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function openEdit(id) {
   const c = cards.find(x => x.id === id); if (!c) return;
   $('#edit').innerHTML = `<label>${t('title')}</label><input id="e1" value="${esc(c.title)}"><label>${t('date')}</label><input id="e2" type="date" value="${c.date || ''}"><label>${t('time')}</label><input id="e3" type="time" value="${c.time || ''}">
