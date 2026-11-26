@@ -137,7 +137,7 @@
     const actions = actionLines(body);
     return {
       title: subject.replace(/^(re|fwd?)\s*:\s*/i, '').slice(0, 120),
-      from, kind, priority, column, score,
+      from, fromName: (from.replace(/<[^>]*>/g, '').replace(/["']/g, '').trim() || from), kind, priority, column, score,
       date: date ? ymd(date) : null,
       time: tm ? pad(tm.h) + ':' + pad(tm.min) : null,
       notes: actions.join('\n'),

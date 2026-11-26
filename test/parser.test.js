@@ -33,4 +33,5 @@ assert.strictEqual(P.parseEmail('Subject: Hello\nJust saying hi', now).priority,
 assert.deepStrictEqual(P.findTime('اجتماع الساعة ٣:٣٠ م'), { h: 15, min: 30 });
 assert.deepStrictEqual(P.findTime('الساعة ١٠ صباحا'), { h: 10, min: 0 });
 assert.deepStrictEqual(P.findTime('الساعة ٢ ظهرا'), { h: 14, min: 0 });
+assert.strictEqual(P.parseEmail('From: "Dr. Mona" <mona@x.edu>\nSubject: Hi\nbody', now).fromName, 'Dr. Mona');
 console.log('all tests passed');
