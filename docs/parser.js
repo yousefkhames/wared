@@ -139,12 +139,12 @@
     const from = header(block, 'From|من');
     const body = block.replace(/^(subject|from|to|cc|date|sent|الموضوع|من|إلى)\s*:.*$/gim, '').trim();
     const all = subject + '\n' + body;
-    let score = 0;
-    if (HIGH.test(all)) score += 2;
-    if (MEET.test(all)) score += 1;
+    let score = 0; const why = [];
+    if (HIGH.test(all)) { score += 2; why.push('keyword'); }
+    if (MEET.test(all)) { score += 1; why.push('meeting'); }
     const date = findDate(all, now);
-    if (date) score += 1;
-    if (NOISE.test(all)) score -= 3;
+    if (date) { score += 1; why.push('date'); }
+    if (NOISE.test(all)) { score -= 3; why.push('noise'); }
     const kind = MEET.test(all) && date ? 'event' : WAIT.test(all) ? 'waiting' : 'task';
     const tm = findTime(all);
     let priority = 'low';
@@ -156,6 +156,7 @@
       from, fromName: (from.replace(/<[^>]*>/g, '').replace(/["']/g, '').trim() || from), kind, priority, column, score,
       date: date ? ymd(date) : null,
       time: tm ? pad(tm.h) + ':' + pad(tm.min) : null,
+      why,
       tag: findTag(all),
       repeat: findRepeat(all),
       notes: actions.join('\n'),

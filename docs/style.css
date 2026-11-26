@@ -82,3 +82,4 @@ dialog input,dialog select,dialog textarea{width:100%;padding:8px;border:1px sol
 .tg-study{background:#e0ecff!important;color:#1d4ea0}.tg-bills{background:#fff1d6!important;color:#8a5a00}.tg-health{background:#dff5e8!important;color:#136b3a}.tg-work{background:#ece3ff!important;color:#5530a8}
 :root[data-theme=dark] .tg{filter:brightness(.8) saturate(1.1)}
 .today{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--surf);border:1px solid var(--line);border-inline-start:4px solid var(--coral);border-radius:12px;padding:10px 12px;margin-bottom:12px}.tdi{padding:4px 10px;min-height:0;border-radius:99px;font-size:13px}.tdi.od{border-color:#d4442f;color:#b8321f}.tdi small{color:var(--mut)}
+.why{color:var(--mut);font-size:13px;margin:8px 0 0}

@@ -55,4 +55,5 @@ assert.strictEqual(P.parseEmail('الموضوع: امتحان\nامتحان ال
 assert.strictEqual(P.parseEmail('Subject: Standup\nStandup every Monday at 9:00', now).repeat, 'WEEKLY');
 assert.strictEqual(P.parseEmail('الموضوع: اجتماع\nاجتماع كل أسبوع', now).repeat, 'WEEKLY');
 assert(P.toICS([{ id: 'r', title: 'S', date: '2026-12-07', repeat: 'WEEKLY', from: '', notes: '' }], now).includes('RRULE:FREQ=WEEKLY'));
+assert(P.parseEmail('Subject: Urgent\nPay 3 Dec 2026', now).why.includes('keyword'));
 console.log('all tests passed');
