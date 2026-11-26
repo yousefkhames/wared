@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Wared | Emails to kanban cards and calendar</title>
 <meta name="description" content="Paste your emails. Wared finds what matters and turns it into kanban cards and calendar items. Runs in your browser, nothing is uploaded.">
-<link rel="icon" href="favicon.svg"><meta name="theme-color" content="#191c4a">
+<link rel="icon" href="favicon.svg"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="logo.svg"><meta name="theme-color" content="#191c4a">
 <script>try{var th=localStorage.getItem("wared.theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.dataset.theme=th}catch(e){}</script><link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -28,7 +28,7 @@
 <section id="cal" class="cal" hidden></section>
 </main>
 <footer><span data-i18n="foot">Free and open source (MIT). Data stays in your browser.</span>
-<span><button id="ics" class="ghost" data-i18n="exportIcs">Export .ics</button> <button id="exp" class="ghost" data-i18n="exportJson">Export JSON</button></span></footer>
+<span><button id="ics" class="ghost" data-i18n="exportIcs">Export .ics</button> <button id="exp" class="ghost" data-i18n="exportJson">Export JSON</button> <button id="imp" class="ghost" data-i18n="importJson">Import JSON</button><input id="impf" type="file" accept="application/json,.json" hidden></span></footer>
 <div id="toast" class="toast" hidden></div>
 <div id="live" class="sr" role="status" aria-live="polite"></div>
 <dialog id="dlg" aria-label="Edit card"><form method="dialog" id="edit"></form></dialog>
