@@ -90,6 +90,7 @@ function renderToday() {
 function relDayNum(c) { return Math.round((new Date(c.date + 'T00:00:00') - new Date(new Date().toDateString())) / 864e5); }
 function render() {
   renderToday();
+  { const n = cards.filter(c => c.column !== 'done').length; document.title = (n ? '(' + n + ') ' : '') + (lang === 'ar' ? 'وارد' : 'Wared') + ' | ' + (lang === 'ar' ? 'من الإيميل لكروت وتقويم' : 'Emails to kanban cards and calendar'); }
   $('#how').hidden = cards.length > 0;
   $('#q').placeholder = t('search');
   const op = cards.filter(c => c.column !== 'done').length, od = cards.filter(isOverdue).length;
