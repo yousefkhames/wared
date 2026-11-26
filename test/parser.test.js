@@ -30,4 +30,7 @@ assert.strictEqual(r3.date, '2026-12-15'); assert(r3.amount.includes('1,500')); 
 const ar2 = P.parseEmail('الموضوع: فاتورة\nيرجى دفع ١٥٠٠ جنيه قبل ١٥ ديسمبر', now);
 assert.strictEqual(ar2.date, '2026-12-15');
 assert.strictEqual(P.parseEmail('Subject: Hello\nJust saying hi', now).priority, 'low');
+assert.deepStrictEqual(P.findTime('اجتماع الساعة ٣:٣٠ م'), { h: 15, min: 30 });
+assert.deepStrictEqual(P.findTime('الساعة ١٠ صباحا'), { h: 10, min: 0 });
+assert.deepStrictEqual(P.findTime('الساعة ٢ ظهرا'), { h: 14, min: 0 });
 console.log('all tests passed');

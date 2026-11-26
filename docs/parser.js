@@ -44,10 +44,10 @@
     if (rg) { let h = +rg[1] % 12; if (/p/i.test(rg[3] || rg[4])) h += 12; return { h, min: +(rg[2] || 0) }; }
     let m = t.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)/i);
     if (m) { let h = +m[1] % 12; if (/p/i.test(m[3])) h += 12; return { h, min: +(m[2] || 0) }; }
+    m = t.match(/(?:الساعة\s*)?(\d{1,2})(?::(\d{2}))?\s*(مساء|مساءً|م|ظهرا|ظهراً|صباحا|صباحاً|ص)(?![\u0600-\u06FF])/) || t.match(/الساعة\s*(\d{1,2})(?::(\d{2}))?()/);
+    if (m) { let h = +m[1]; const ap = m[3] || ''; if (/^(مساء|مساءً|م)$/.test(ap) && h < 12) h += 12; else if (/^(ظهرا|ظهراً)$/.test(ap) && h < 6) h += 12; else if (/^(صباحا|صباحاً|ص)$/.test(ap) && h === 12) h = 0; return { h, min: +(m[2] || 0) }; }
     m = t.match(/\b(?:at|@|الساعة)\s*(\d{1,2}):(\d{2})\b/i) || t.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
     if (m) return { h: +m[1], min: +m[2] };
-    m = t.match(/(?:الساعة)\s*(\d{1,2})\s*(مساء|م|صباحا|صباحاً|ص)?/);
-    if (m) { let h = +m[1]; if (/مساء|^م$/.test(m[2] || '') && h < 12) h += 12; return { h, min: 0 }; }
     return null;
   }
 
