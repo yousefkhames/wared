@@ -20,15 +20,14 @@
     if (!text) return [];
     let parts = text.split(/\n\s*(?:-{3,}|={3,}|_{3,})\s*\n/);
     if (parts.length === 1) {
-      const idx = [];
-      const re = /^(?:From|Subject|من|الموضوع)\s*:/gim;
-      let m, seen = new Set();
-      while ((m = re.exec(text))) {
-        const key = m[0].toLowerCase();
-        if (seen.has(key) && /^(from|من)/i.test(m[0])) idx.push(m.index);
-        seen.add(key);
-      }
-      if (idx.length) { parts = []; let prev = 0; idx.forEach(i => { parts.push(text.slice(prev, i)); prev = i; }); parts.push(text.slice(prev)); }
+      const lines = text.split('\n'); const out = []; let cur = []; let sawSubject = false, prev = '';
+      lines.forEach(l => {
+        if (/^(?:From|من)\s*:/i.test(l) && sawSubject && !/forwarded message|original message|رسالة محولة/i.test(prev)) { out.push(cur.join('\n')); cur = []; sawSubject = false; }
+        if (/^(?:Subject|الموضوع)\s*:/i.test(l)) sawSubject = true;
+        cur.push(l); if (l.trim()) prev = l;
+      });
+      out.push(cur.join('\n'));
+      if (out.length > 1) parts = out;
     }
     return parts.map(p => p.trim()).filter(Boolean);
   }
@@ -107,7 +106,7 @@
     return block.split('\n').filter(l => !/^\s*>/.test(l)).join('\n');
   }
   function headerDate(block) {
-    const v = header(block, 'Date|التاريخ'); if (!v) return null;
+    const v = header(block, 'Date|Sent|التاريخ'); if (!v) return null;
     const d = new Date(v); return isNaN(d) ? null : d;
   }
   function extras(all) {
@@ -127,7 +126,7 @@
     now = headerDate(block) || now || new Date();
     const subject = header(block, 'Subject|الموضوع') || block.split('\n').find(l => l.trim() && !/^(from|to|date|من)\s*:/i.test(l)) || 'Untitled';
     const from = header(block, 'From|من');
-    const body = block.replace(/^(subject|from|to|cc|date|الموضوع|من|إلى)\s*:.*$/gim, '').trim();
+    const body = block.replace(/^(subject|from|to|cc|date|sent|الموضوع|من|إلى)\s*:.*$/gim, '').trim();
     const all = subject + '\n' + body;
     let score = 0;
     if (HIGH.test(all)) score += 2;

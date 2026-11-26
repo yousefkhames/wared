@@ -39,4 +39,15 @@ assert(longIcs.split('\r\n').every(l => l.length <= 75)); assert(longIcs.endsWit
 assert.strictEqual(P.findDate('due in 2 weeks', now).getDate(), 10);
 assert.strictEqual(P.findDate('بعد ٣ ايام', now).getDate(), 29);
 assert.strictEqual(P.findDate('payment on the 5th', now).getMonth(), 11);
+const outlook = `From: A <a@x.com>
+Sent: Monday, December 7, 2026 9:00 AM
+Subject: First
+Please submit tomorrow.
+From: B <b@x.com>
+Sent: Monday, December 7, 2026 10:00 AM
+Subject: Second
+Meeting Friday at 4 pm.`;
+const o = P.parseAll(outlook, now); assert.strictEqual(o.length, 2); assert.strictEqual(o[0].date, '2026-12-08');
+const fwd = P.parseAll('From: me@x.com\nSubject: Fwd: Deadline\n---------- Forwarded message ---------\nFrom: boss@x.com\nSubject: Deadline\nSubmit by 12 Dec 2026', now);
+assert.strictEqual(fwd.length, 1);
 console.log('all tests passed');
