@@ -1,7 +1,7 @@
 const T = {
- en:{skip:'Skip to content',moveBack:'Move to previous column',moveNext:'Move to next column',brand:'Wared',tag:'Important emails, sorted',board:'Board',calendar:'Calendar',paste:'Paste emails',privacy:'Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.',extract:'Extract cards',sample:'Try a sample',clearBoard:'Clear board',foot:'Free and open source (MIT). Data stays in your browser.',exportIcs:'Export .ics',exportJson:'Export JSON',
+ en:{skip:'Skip to content',search:'Search cards',overdue:'overdue',open:'open',undo:'Undo',deleted:'Card deleted',moveBack:'Move to previous column',moveNext:'Move to next column',brand:'Wared',tag:'Important emails, sorted',board:'Board',calendar:'Calendar',paste:'Paste emails',privacy:'Private by design: your text is processed in this page only. Nothing is uploaded or read from your inbox. Separate emails with a line of ---.',extract:'Extract cards',sample:'Try a sample',clearBoard:'Clear board',foot:'Free and open source (MIT). Data stays in your browser.',exportIcs:'Export .ics',exportJson:'Export JSON',
   todo:'To do',scheduled:'Scheduled',waiting:'Waiting',done:'Done',high:'High',medium:'Medium',low:'Low',skipped:'Skipped as noise',add:'Add',noDate:'No date',empty:'Nothing here yet. Paste some emails above.',save:'Save',del:'Delete',title:'Title',date:'Date',time:'Time',col:'Column',notes:'Notes',pri:'Priority',none:'No emails found.',calEmpty:'No dated items yet.',found:'cards found'},
- ar:{skip:'تخطى للمحتوى',moveBack:'انقل للعمود السابق',moveNext:'انقل للعمود التالي',brand:'وارد',tag:'الإيميلات المهمة، متنظمة',board:'اللوحة',calendar:'التقويم',paste:'الصق الإيميلات',privacy:'الخصوصية أولاً: النص بيتعالج جوه الصفحة بس. مفيش حاجة بتترفع ولا بنقرا الإيميل بتاعك. افصل بين الإيميلات بسطر ---.',extract:'استخرج الكروت',sample:'جرب مثال',clearBoard:'امسح اللوحة',foot:'مجاني ومفتوح المصدر (MIT). بياناتك بتفضل في متصفحك.',exportIcs:'تصدير .ics',exportJson:'تصدير JSON',
+ ar:{skip:'تخطى للمحتوى',search:'ابحث في الكروت',overdue:'متأخر',open:'مفتوح',undo:'تراجع',deleted:'اتحذف الكارت',moveBack:'انقل للعمود السابق',moveNext:'انقل للعمود التالي',brand:'وارد',tag:'الإيميلات المهمة، متنظمة',board:'اللوحة',calendar:'التقويم',paste:'الصق الإيميلات',privacy:'الخصوصية أولاً: النص بيتعالج جوه الصفحة بس. مفيش حاجة بتترفع ولا بنقرا الإيميل بتاعك. افصل بين الإيميلات بسطر ---.',extract:'استخرج الكروت',sample:'جرب مثال',clearBoard:'امسح اللوحة',foot:'مجاني ومفتوح المصدر (MIT). بياناتك بتفضل في متصفحك.',exportIcs:'تصدير .ics',exportJson:'تصدير JSON',
   todo:'المطلوب',scheduled:'مجدول',waiting:'بانتظار',done:'تم',high:'عالية',medium:'متوسطة',low:'منخفضة',skipped:'اتتجاهل (إعلانات)',add:'أضف',noDate:'بدون تاريخ',empty:'مفيش حاجة لسه. الصق إيميلات فوق.',save:'حفظ',del:'حذف',title:'العنوان',date:'التاريخ',time:'الوقت',col:'العمود',notes:'ملاحظات',pri:'الأولوية',none:'مفيش إيميلات.',calEmpty:'مفيش عناصر بتاريخ.',found:'كروت'}
 };
 const COLS = ['todo','scheduled','waiting','done'];
@@ -47,9 +47,22 @@ function cardHTML(c) {
   const overdue = c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
   return `<div class="card ${c.priority}" draggable="true" tabindex="0" role="button" aria-label="${esc(c.title)}, ${t(c.priority)}, ${fmtDate(c)}" data-id="${c.id}"><b>${esc(c.title)}</b><small>${esc(c.from)}</small><div><span class="badge">${t(c.priority)}</span><span class="badge ${overdue ? 'due' : ''}">${fmtDate(c)}</span></div><div class="mv"><button class="mvb" data-mv="-1" aria-label="${t('moveBack')}">${lang === 'ar' ? '›' : '‹'}</button><button class="mvb" data-mv="1" aria-label="${t('moveNext')}">${lang === 'ar' ? '‹' : '›'}</button></div></div>`;
 }
+const isOverdue = c => c.date && c.column !== 'done' && new Date(c.date + 'T23:59:59') < new Date();
+function visible() {
+  const q = ($('#q').value || '').toLowerCase().trim(), p = $('#pf').value;
+  return cards.filter(c => (!p || c.priority === p) && (!q || (c.title + ' ' + c.from + ' ' + c.notes).toLowerCase().includes(q)));
+}
+function toast(msg, undoFn) {
+  const el = $('#toast'); el.hidden = false; el.innerHTML = esc(msg) + (undoFn ? ' <button id="undoB">' + t('undo') + '</button>' : '');
+  if (undoFn) $('#undoB').onclick = () => { undoFn(); el.hidden = true; };
+  clearTimeout(toast.h); toast.h = setTimeout(() => el.hidden = true, 6000);
+}
 function render() {
+  $('#q').placeholder = t('search');
+  const op = cards.filter(c => c.column !== 'done').length, od = cards.filter(isOverdue).length;
+  $('#stats').innerHTML = cards.length ? op + ' ' + t('open') + (od ? ' · <b class="odue">' + od + ' ' + t('overdue') + '</b>' : '') : '';
   const b = $('#board');
-  b.innerHTML = COLS.map(col => { const l = cards.filter(c => c.column === col);
+  b.innerHTML = COLS.map(col => { const l = visible().filter(c => c.column === col);
     return `<div class="col" data-col="${col}"><h3>${t(col)}<span>${l.length}</span></h3>${l.map(cardHTML).join('') || '<div class="empty">' + (cards.length ? '' : t('empty')) + '</div>'}</div>`; }).join('');
   b.querySelectorAll('.card').forEach(el => {
     el.addEventListener('dragstart', e => e.dataTransfer.setData('text', el.dataset.id));
@@ -74,10 +87,11 @@ function openEdit(id) {
   <div class="row"><button class="primary" value="ok">${t('save')}</button><button value="del" class="ghost">${t('del')}</button></div>`;
   const dlg = $('#dlg'); dlg.showModal();
   $('#edit').onsubmit = e => { const v = e.submitter && e.submitter.value;
-    if (v === 'del') cards = cards.filter(x => x.id !== id);
+    if (v === 'del') { const idx = cards.indexOf(c); cards = cards.filter(x => x.id !== id); toast(t('deleted'), () => { cards.splice(idx, 0, c); save(); render(); }); }
     else if (v === 'ok') Object.assign(c, { title: $('#e1').value, date: $('#e2').value || null, time: $('#e3').value || null, column: $('#e4').value, priority: $('#e5').value, notes: $('#e6').value });
     save(); render(); };
 }
+$('#q').oninput = $('#pf').onchange = render;
 $('#go').onclick = () => {
   pending = Wared.parseAll($('#src').value).map(p => ({ ...p, id: uid(), keep: p.column !== 'skip' }));
   const pv = $('#preview'); pv.hidden = false;

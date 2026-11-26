@@ -23,11 +23,13 @@
   <div class="row"><button id="go" class="primary" data-i18n="extract">Extract cards</button><button id="sample" class="ghost" data-i18n="sample">Try a sample</button><button id="clear" class="ghost" data-i18n="clearBoard">Clear board</button></div>
   <div id="preview" class="preview" hidden></div>
 </section>
+<div class="bar" id="bar"><label class="sr" for="q" data-i18n="search">Search</label><input id="q" type="search" data-ph="search"><label class="sr" for="pf" data-i18n="pri">Priority</label><select id="pf"><option value="">—</option><option value="high" data-i18n="high">High</option><option value="medium" data-i18n="medium">Medium</option><option value="low" data-i18n="low">Low</option></select><span id="stats" class="stats"></span></div>
 <section id="board" class="board" aria-label="Kanban board"></section>
 <section id="cal" class="cal" hidden></section>
 </main>
 <footer><span data-i18n="foot">Free and open source (MIT). Data stays in your browser.</span>
 <span><button id="ics" class="ghost" data-i18n="exportIcs">Export .ics</button> <button id="exp" class="ghost" data-i18n="exportJson">Export JSON</button></span></footer>
+<div id="toast" class="toast" hidden></div>
 <div id="live" class="sr" role="status" aria-live="polite"></div>
 <dialog id="dlg" aria-label="Edit card"><form method="dialog" id="edit"></form></dialog>
 <script src="parser.js"></script><script src="app.js"></script>
