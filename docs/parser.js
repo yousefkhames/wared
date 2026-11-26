@@ -2,6 +2,7 @@
 (function (root) {
   const MONTHS = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,sept:8,oct:9,nov:10,dec:11,
     january:0,february:1,march:2,april:3,june:5,july:6,august:7,september:8,october:9,november:10,december:11 };
+  const AR_MONTHS = {'يناير':0,'فبراير':1,'مارس':2,'أبريل':3,'ابريل':3,'مايو':4,'يونيو':5,'يوليو':6,'أغسطس':7,'اغسطس':7,'سبتمبر':8,'أكتوبر':9,'اكتوبر':9,'نوفمبر':10,'ديسمبر':11};
   const DAYS = { sun:0,mon:1,tue:2,tues:2,wed:3,thu:4,thur:4,thurs:4,fri:5,sat:6,
     sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6 };
   const AR_DAYS = { 'الأحد':0,'الاثنين':1,'الإثنين':1,'الثلاثاء':2,'الأربعاء':3,'الخميس':4,'الجمعة':5,'السبت':6 };
@@ -39,6 +40,8 @@
 
   function findTime(t) {
     t = toEn(t);
+    const rg = t.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*(?:to|-|until|till)\s*\d{1,2}(?::\d{2})?\s*(am|pm)\b/i);
+    if (rg) { let h = +rg[1] % 12; if (/p/i.test(rg[3] || rg[4])) h += 12; return { h, min: +(rg[2] || 0) }; }
     let m = t.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)/i);
     if (m) { let h = +m[1] % 12; if (/p/i.test(m[3])) h += 12; return { h, min: +(m[2] || 0) }; }
     m = t.match(/\b(?:at|@|الساعة)\s*(\d{1,2}):(\d{2})\b/i) || t.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
@@ -66,7 +69,12 @@
       if (!yy && d < new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30)) d = new Date(y + 1, mo, dd);
       return d;
     }
+    for (const k in AR_MONTHS) { const r = t.match(new RegExp('(\\d{1,2})\\s*' + k)); if (r) { let d = new Date(now.getFullYear(), AR_MONTHS[k], +r[1]); if (d < new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30)) d = new Date(d.getFullYear() + 1, d.getMonth(), d.getDate()); return d; } }
     const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (/\bend of (the )?month\b|آخر الشهر|نهاية الشهر/i.test(t)) return new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    if (/\bnext week\b|الأسبوع القادم|الاسبوع الجاي/i.test(t)) { base.setDate(base.getDate() + 7); return base; }
+    if (/بعد بكرة|بعد غد/.test(t)) { base.setDate(base.getDate() + 2); return base; }
+    if (/\beod\b|\bend of (the )?day\b/i.test(t)) return base;
     if (/\b(today|tonight)\b|اليوم/i.test(t)) return base;
     if (/\btomorrow\b|بكرة|غدا|غداً/i.test(t)) { base.setDate(base.getDate() + 1); return base; }
     m = t.match(/\b(?:next\s+|this\s+|on\s+|by\s+)?(sun|mon|tue|tues|wed|thu|thur|thurs|fri|sat|sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b/i);
@@ -74,7 +82,6 @@
     if (wd === undefined) for (const k in AR_DAYS) if (t.includes(k)) { wd = AR_DAYS[k]; break; }
     if (wd !== undefined) {
       let diff = (wd - base.getDay() + 7) % 7; if (diff === 0) diff = 7;
-      if (m && /next\s/i.test(m[0])) diff += diff < 7 ? 0 : 0;
       base.setDate(base.getDate() + diff); return base;
     }
     m = t.match(/\bin\s+(\d+)\s+days?\b/i);
@@ -88,8 +95,30 @@
     return lines.filter(l => verbs.test(l)).slice(0, 3);
   }
 
+  function stripQuoted(block) {
+    const cut = block.search(/^\s*(?:-{2,}\s*Original Message\s*-{2,}|On .{5,80} wrote:|في .{5,60} كتب.*:)\s*$/im);
+    if (cut > 0) block = block.slice(0, cut);
+    return block.split('\n').filter(l => !/^\s*>/.test(l)).join('\n');
+  }
+  function headerDate(block) {
+    const v = header(block, 'Date|التاريخ'); if (!v) return null;
+    const d = new Date(v); return isNaN(d) ? null : d;
+  }
+  function extras(all) {
+    const link = (all.match(/https?:\/\/(?:[\w.-]*(?:zoom\.us|meet\.google\.com|teams\.microsoft\.com|webex\.com)[^\s)>\]]*)/i) || [])[0] || null;
+    const loc = (toEn(all).match(/(?:location|venue|room|المكان|القاعة|قاعة)\s*:?\s*([^\n.,;]{2,40})/i) || [])[1];
+    const amt = (toEn(all).match(/(?:\$|USD|EGP|EUR|£|€)\s?\d[\d,]*(?:\.\d+)?|\d[\d,]*(?:\.\d+)?\s?(?:USD|EGP|EUR|جنيه|ج\.م)/i) || [])[0] || null;
+    return { link, location: loc ? loc.trim() : null, amount: amt };
+  }
+  function findEnd(t) {
+    t = toEn(t);
+    const m = t.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*(?:to|-|until|till)\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b/i);
+    if (!m) return null;
+    let h = +m[4] % 12; if (/p/i.test(m[6])) h += 12; return { h, min: +(m[5] || 0) };
+  }
   function parseEmail(block, now) {
-    now = now || new Date();
+    block = stripQuoted(block);
+    now = headerDate(block) || now || new Date();
     const subject = header(block, 'Subject|الموضوع') || block.split('\n').find(l => l.trim() && !/^(from|to|date|من)\s*:/i.test(l)) || 'Untitled';
     const from = header(block, 'From|من');
     const body = block.replace(/^(subject|from|to|cc|date|الموضوع|من|إلى)\s*:.*$/gim, '').trim();
@@ -112,6 +141,8 @@
       date: date ? ymd(date) : null,
       time: tm ? pad(tm.h) + ':' + pad(tm.min) : null,
       notes: actions.join('\n'),
+      endTime: (e => e ? pad(e.h) + ':' + pad(e.min) : null)(findEnd(all)),
+      ...extras(all),
       important: score >= 1
     };
   }
@@ -127,13 +158,15 @@
       const d = c.date.replace(/-/g, '');
       out.push('BEGIN:VEVENT', 'UID:' + c.id + '@wared.local', 'DTSTAMP:' + stamp);
       if (c.time) {
-        const [h, m] = c.time.split(':').map(Number); const e = new Date(2000, 0, 1, h + 1, m);
-        out.push('DTSTART:' + d + 'T' + pad(h) + pad(m) + '00', 'DTEND:' + d + 'T' + pad(e.getHours()) + pad(m) + '00');
+        const [h, m] = c.time.split(':').map(Number); const [eh, em] = c.endTime ? c.endTime.split(':').map(Number) : [(h + 1) % 24, m];
+        out.push('DTSTART:' + d + 'T' + pad(h) + pad(m) + '00', 'DTEND:' + d + 'T' + pad(eh) + pad(em) + '00');
       } else {
         const nx = new Date(c.date + 'T00:00:00'); nx.setDate(nx.getDate() + 1);
         out.push('DTSTART;VALUE=DATE:' + d, 'DTEND;VALUE=DATE:' + ymd(nx).replace(/-/g, ''));
       }
-      out.push('SUMMARY:' + icsEscape(c.title), 'DESCRIPTION:' + icsEscape((c.from ? 'From: ' + c.from + '\n' : '') + (c.notes || '')), 'END:VEVENT');
+      if (c.location) out.push('LOCATION:' + icsEscape(c.location));
+      out.push('BEGIN:VALARM', 'TRIGGER:-PT30M', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEscape(c.title), 'END:VALARM');
+      out.push('SUMMARY:' + icsEscape(c.title), 'DESCRIPTION:' + icsEscape((c.from ? 'From: ' + c.from + '\n' : '') + (c.link ? 'Link: ' + c.link + '\n' : '') + (c.notes || '')), 'END:VEVENT');
     });
     out.push('END:VCALENDAR');
     return out.join('\r\n');

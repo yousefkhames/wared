@@ -20,4 +20,9 @@ const ar = P.parseEmail('الموضوع: اجتماع الفريق\nاجتماع
 assert.strictEqual(ar.kind, 'event'); assert.strictEqual(ar.time, '15:00');
 const ics = P.toICS(r.filter(x => x.date).map((x, i) => ({ ...x, id: 'c' + i })), now);
 assert(ics.includes('BEGIN:VEVENT') && ics.includes('DTSTART:20261203T170000'));
+const r2 = P.parseEmail('Date: Mon, 7 Dec 2026 09:00:00\nSubject: Call\nCall tomorrow from 2 to 3 pm. Join https://zoom.us/j/123 Location: Room 5\n\nOn Sun, someone wrote:\n> old stuff 1 Jan', now);
+assert.strictEqual(r2.date, '2026-12-08'); assert.strictEqual(r2.time, '14:00'); assert.strictEqual(r2.endTime, '15:00');
+assert(r2.link.includes('zoom.us')); assert.strictEqual(r2.location, 'Room 5');
+assert.strictEqual(P.findDate('بحلول ١٠ ديسمبر', now).getDate(), 10);
+assert.strictEqual(P.findDate('end of month', now).getDate(), 30);
 console.log('all tests passed');
