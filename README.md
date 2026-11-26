@@ -15,3 +15,9 @@ It uses rules, not an AI model, so unusual phrasing can be missed. You review an
 
 ## Run
 Open `docs/index.html`. Tests: `node test/parser.test.js`. MIT license.
+
+## Research notes (existing tools surveyed)
+- page2task (iamsherryshen), NavinColumbia/emailToTaskDev, Kambrian/ai-mail-to-calendar, tonimelisma/email-to-calendar, Email_Task_Agent: mostly AI-based or need Gmail/Thunderbird access and API keys.
+- mail2task (EbyJK), EmailManager (rule-based spaCy): Python, rule-based extraction and priority, server side.
+- chrono-node: the standard JS date parser, English-centric, so Wared ships its own small parser to handle Arabic dates and digits with zero dependencies.
+Gap Wared fills: free, no account, no mailbox access, bilingual Arabic/English, paste-and-review with a kanban board and .ics export. Borrowed ideas: review-before-add (from the AI tools, to avoid wrong auto-created events) and rule-based priority scoring (from mail2task/EmailManager).
