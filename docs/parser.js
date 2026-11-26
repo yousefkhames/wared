@@ -169,7 +169,8 @@
       out.push('SUMMARY:' + icsEscape(c.title), 'DESCRIPTION:' + icsEscape((c.from ? 'From: ' + c.from + '\n' : '') + (c.link ? 'Link: ' + c.link + '\n' : '') + (c.notes || '')), 'END:VEVENT');
     });
     out.push('END:VCALENDAR');
-    return out.join('\r\n');
+    const fold = l => { if (l.length <= 73) return l; const parts = []; let r = l; parts.push(r.slice(0, 73)); r = r.slice(73); while (r.length) { parts.push(' ' + r.slice(0, 72)); r = r.slice(72); } return parts.join('\r\n'); };
+    return out.map(fold).join('\r\n') + '\r\n';
   }
 
   const api = { splitEmails, parseEmail, parseAll, toICS, findDate, findTime };
