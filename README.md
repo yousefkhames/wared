@@ -72,3 +72,10 @@ Gap Wared fills: free, no account, no mailbox access, bilingual Arabic/English, 
 
 ## License
 MIT
+
+
+## Demo / portfolio project
+
+Static GitHub Pages site. Data stays in your browser. Sample data is fictional and results are not professional, legal, medical or financial advice.
+
+By Yousef Khames · من تطوير يوسف خميس
